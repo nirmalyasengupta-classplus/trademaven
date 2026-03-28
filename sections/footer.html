@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Trade Maven – Footer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --green:#00e5a0; --bg:#000; --text:#fff;
+    --muted:rgba(255,255,255,0.48);
+    --border:rgba(255,255,255,0.07);
+    --green-border:rgba(0,229,160,0.15);
+  }
+  html, body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+
+  footer { position:relative; overflow:hidden; }
+
+  /* ── CTA BANNER ── */
+  .footer-cta {
+    position:relative; margin:0 5%; border-radius:24px; overflow:hidden;
+    padding:56px 60px; display:flex; align-items:center;
+    justify-content:space-between; gap:32px; flex-wrap:wrap;
+    background:linear-gradient(135deg,#061a10 0%,#030f08 60%,#020a05 100%);
+    border:1px solid rgba(0,229,160,0.2);
+    box-shadow:0 0 80px rgba(0,229,160,0.06), inset 0 0 60px rgba(0,229,160,0.03);
+    opacity:0; transform:translateY(24px);
+    transition:opacity .7s, transform .7s;
+  }
+  .footer-cta.visible { opacity:1; transform:translateY(0); }
+  .footer-cta::before {
+    content:''; position:absolute; top:-60px; right:-60px;
+    width:280px; height:280px;
+    background:radial-gradient(circle,rgba(0,229,160,0.15) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .footer-cta::after {
+    content:''; position:absolute; bottom:-40px; left:-40px;
+    width:200px; height:200px;
+    background:radial-gradient(circle,rgba(0,229,160,0.08) 0%,transparent 70%);
+    pointer-events:none;
+  }
+
+  .cta-left { position:relative; z-index:1; max-width:560px; }
+  .cta-eyebrow {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(0,229,160,0.1); border:1px solid rgba(0,229,160,0.25);
+    border-radius:100px; padding:4px 14px; margin-bottom:16px;
+    font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--green);
+  }
+  .cta-eyebrow .dot { width:5px; height:5px; background:var(--green); border-radius:50%; animation:pulse-dot 2s ease-in-out infinite; }
+  .cta-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(28px,3.5vw,46px); line-height:1.05; letter-spacing:1px; color:#fff; margin-bottom:10px; }
+  .cta-title .accent { color:var(--green); }
+  .cta-desc { font-size:14px; color:var(--muted); line-height:1.7; }
+
+  .cta-right { position:relative; z-index:1; display:flex; flex-direction:column; gap:12px; align-items:flex-end; flex-shrink:0; }
+  .btn-cta {
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--green); color:#000; border:none; padding:14px 32px; border-radius:10px;
+    font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700; letter-spacing:.5px;
+    text-decoration:none; cursor:pointer; transition:all .25s cubic-bezier(.4,0,.2,1);
+    white-space:nowrap; position:relative; overflow:hidden;
+  }
+  .btn-cta::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,.2),transparent); opacity:0; transition:opacity .2s; }
+  .btn-cta:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,229,160,0.45); background:#00ffb3; }
+  .btn-cta:hover::before { opacity:1; }
+  .btn-cta svg { width:15px; height:15px; transition:transform .2s; }
+  .btn-cta:hover svg { transform:translateX(3px); }
+  .cta-note { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+  .cta-note svg { width:12px; height:12px; color:var(--green); }
+
+  /* ── FOOTER BODY ── */
+  .footer-body {
+    padding:72px 5% 0; position:relative; z-index:1;
+    opacity:0; transform:translateY(20px);
+    transition:opacity .7s .1s, transform .7s .1s;
+  }
+  .footer-body.visible { opacity:1; transform:translateY(0); }
+  .footer-body::before {
+    content:''; display:block; height:1px;
+    background:linear-gradient(90deg,transparent,var(--green-border),transparent);
+    margin-bottom:64px;
+  }
+
+  .footer-grid {
+    display:grid; grid-template-columns:1.8fr 1fr 1fr 1fr;
+    gap:48px; margin-bottom:64px;
+  }
+
+  /* Brand */
+  .brand-logo { display:flex; align-items:center; gap:10px; text-decoration:none; margin-bottom:20px; }
+  .brand-logo .logo-img { width:34px; height:34px; object-fit:contain; border-radius:6px; }
+  .brand-logo .logo-text { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:2px; color:#fff; }
+  .brand-logo .logo-text span { color:var(--green); }
+  .brand-desc { font-size:13px; color:var(--muted); line-height:1.75; max-width:280px; margin-bottom:24px; }
+
+  .social-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .social-btn {
+    width:38px; height:38px; border-radius:10px;
+    background:rgba(255,255,255,0.04); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    text-decoration:none; transition:all .2s; color:var(--muted);
+  }
+  .social-btn:hover { background:rgba(0,229,160,0.1); border-color:rgba(0,229,160,0.35); color:var(--green); transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,229,160,0.15); }
+  .social-btn svg { width:16px; height:16px; }
+
+  /* Columns */
+  .footer-col-title { font-family:'Rajdhani',sans-serif; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--green); margin-bottom:20px; }
+  .footer-links { list-style:none; display:flex; flex-direction:column; gap:12px; }
+  .footer-links a { font-size:13px; color:var(--muted); text-decoration:none; transition:color .2s, padding-left .2s; display:inline-flex; align-items:center; }
+  .footer-links a:hover { color:var(--text); padding-left:4px; }
+
+  /* Newsletter */
+  .newsletter-desc { font-size:12px; color:var(--muted); line-height:1.6; margin-bottom:14px; }
+  .newsletter-form { display:flex; gap:8px; }
+  .newsletter-input {
+    flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--border);
+    border-radius:8px; padding:10px 14px; font-size:13px; color:var(--text);
+    font-family:'DM Sans',sans-serif; outline:none; transition:border-color .2s;
+  }
+  .newsletter-input::placeholder { color:var(--muted); }
+  .newsletter-input:focus { border-color:rgba(0,229,160,0.4); }
+  .newsletter-btn {
+    background:var(--green); color:#000; border:none; padding:10px 18px;
+    border-radius:8px; cursor:pointer; font-family:'Rajdhani',sans-serif;
+    font-size:13px; font-weight:700; transition:all .2s; white-space:nowrap;
+  }
+  .newsletter-btn:hover { background:#00ffb3; transform:translateY(-1px); }
+
+  /* Bottom bar */
+  .footer-bottom {
+    border-top:1px solid var(--border); padding:24px 0 32px;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;
+  }
+  .footer-bottom-left { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .copyright { font-size:12px; color:var(--muted); }
+  .copyright span { color:var(--green); }
+  .legal-links { display:flex; gap:16px; }
+  .legal-links a { font-size:12px; color:var(--muted); text-decoration:none; transition:color .2s; }
+  .legal-links a:hover { color:var(--text); }
+  .footer-bottom-right { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); }
+  .made-with-dot { width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse-dot 2s ease-in-out infinite; }
+
+  .footer-bg-glow {
+    position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+    width:800px; height:400px;
+    background:radial-gradient(ellipse,rgba(0,229,160,0.05) 0%,transparent 65%);
+    pointer-events:none; z-index:0;
+  }
+
+  @keyframes pulse-dot { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,229,160,.5)} 50%{opacity:.7;box-shadow:0 0 0 4px rgba(0,229,160,0)} }
+
+  @media(max-width:900px){
+    .footer-grid{grid-template-columns:1fr 1fr;gap:36px;}
+    .footer-cta{flex-direction:column;padding:40px 32px;}
+    .cta-right{align-items:flex-start;}
+  }
+  @media(max-width:560px){
+    .footer-grid{grid-template-columns:1fr;}
+    .footer-bottom{flex-direction:column;align-items:flex-start;}
+    .footer-cta{margin:0 4%;padding:32px 24px;}
+    .newsletter-form{flex-direction:column;}
+    .newsletter-btn{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<footer>
+  <div class="footer-bg-glow"></div>
+
+  <!-- CTA BANNER -->
+  <div class="footer-cta" id="footerCta">
+    <div class="cta-left">
+      <div class="cta-eyebrow"><span class="dot"></span> Best Value — Save Up To 30%</div>
+      <h2 class="cta-title">Get Both Courses.<br>One <span class="accent">Bundle. Best Price.</span></h2>
+      <p class="cta-desc">The Bundle includes the full 2025 Maven Mentorship + 2026 Live Batch — SMC, ICT, CRT, CAB &amp; the exclusive Maven Concept. Everything you need, in one package at the lowest price.</p>
+    </div>
+    <div class="cta-right">
+      <a href="https://www.itrademaven.com/courses/763609?utm" target="_blank" class="btn-cta">
+        Get Bundle Course
+        <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5h9M8 3.5l4 4-4 4"/></svg>
+      </a>
+      <div class="cta-note">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>
+        2025 Mentorship + 2026 Live Batch · Lifetime access
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER BODY -->
+  <div class="footer-body" id="footerBody">
+    <div class="footer-grid">
+
+      <!-- Brand -->
+      <div class="footer-brand">
+        <a class="brand-logo" href="#">
+          <img class="logo-img"
+               src="https://play-lh.googleusercontent.com/hvznbb19QDAuKVHKBY8-nBu-4zSexAQZDywYElnUhqJMkyfUQ2Dv6kcj0iWf6rI53gwKmfbzrxbp2jS73f5SVg=w480-h960-rw"
+               alt="Trade Maven Logo"/>
+          <span class="logo-text">TRADE <span>MAVEN</span></span>
+        </a>
+        <p class="brand-desc">India's one of the finest Crypto &amp; Forex traders. Teaching SMC + ICT hybrid methodology across Nifty, BankNifty, XAUUSD &amp; Crypto in Hindi &amp; English.</p>
+        <div class="social-row">
+          <!-- YouTube -->
+          <a href="https://www.youtube.com/@itrademaven" target="_blank" class="social-btn" title="YouTube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6a3 3 0 00-2.1 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 002.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 002.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          </a>
+          <!-- Instagram -->
+          <a href="#" class="social-btn" title="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <!-- Telegram -->
+          <a href="#" class="social-btn" title="Telegram">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.9 8.2l-2 9.4c-.1.6-.5.8-1 .5l-2.8-2-1.3 1.3c-.2.2-.3.3-.6.3l.2-2.8 4.8-4.3c.2-.2 0-.3-.3-.1L7.1 14.6l-2.7-.9c-.6-.2-.6-.6.1-.8l10.6-4.1c.5-.2 1 .1.8.8z"/></svg>
+          </a>
+          <!-- Twitter / X -->
+          <a href="#" class="social-btn" title="Twitter / X">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <!-- WhatsApp -->
+          <a href="#" class="social-btn" title="WhatsApp">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Courses -->
+      <div class="footer-col">
+        <div class="footer-col-title">Courses</div>
+        <ul class="footer-links">
+          <li><a href="https://www.itrademaven.com/courses/758790?utm" target="_blank">2026 Live Maven Mentorship</a></li>
+          <li><a href="https://www.itrademaven.com/courses/763609" target="_blank">2025 Maven Mentorship</a></li>
+          <li><a href="https://www.itrademaven.com/courses/763609?utm" target="_blank">Bundle Course (Best Value)</a></li>
+          <li><a href="https://www.youtube.com/@itrademaven" target="_blank">Free YouTube Lessons</a></li>
+        </ul>
+      </div>
+
+      <!-- Learn -->
+      <div class="footer-col">
+        <div class="footer-col-title">Learn</div>
+        <ul class="footer-links">
+          <li><a href="#">Price Action</a></li>
+          <li><a href="#">Smart Money Concepts</a></li>
+          <li><a href="#">ICT Concepts</a></li>
+          <li><a href="#">CRT &amp; CAB Concepts</a></li>
+          <li><a href="#">Maven Concept</a></li>
+          <li><a href="#">Live Trading Sessions</a></li>
+        </ul>
+      </div>
+
+      <!-- Newsletter -->
+      <div class="footer-col">
+        <div class="footer-col-title">Stay Updated</div>
+        <p class="newsletter-desc">Get free market insights, trade setups &amp; course updates straight to your inbox.</p>
+        <div class="newsletter-form">
+          <input class="newsletter-input" type="email" placeholder="Your email address"/>
+          <button class="newsletter-btn">Join</button>
+        </div>
+
+        <div style="margin-top:28px;">
+          <div class="footer-col-title" style="margin-bottom:14px;">Markets Covered</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <div style="background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.18);border-radius:8px;padding:5px 10px;font-size:11px;color:rgba(0,229,160,0.75);font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.5px;">NIFTY 50</div>
+            <div style="background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.18);border-radius:8px;padding:5px 10px;font-size:11px;color:rgba(0,229,160,0.75);font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.5px;">BANKNIFTY</div>
+            <div style="background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.18);border-radius:8px;padding:5px 10px;font-size:11px;color:rgba(0,229,160,0.75);font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.5px;">XAUUSD</div>
+            <div style="background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.18);border-radius:8px;padding:5px 10px;font-size:11px;color:rgba(0,229,160,0.75);font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.5px;">CRYPTO</div>
+            <div style="background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.18);border-radius:8px;padding:5px 10px;font-size:11px;color:rgba(0,229,160,0.75);font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.5px;">FOREX</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-left">
+        <p class="copyright">© 2025 <span>Trade Maven</span>. All rights reserved.</p>
+        <div class="legal-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Refund Policy</a>
+          <a href="#">Disclaimer</a>
+        </div>
+      </div>
+      <div class="footer-bottom-right">
+        <div class="made-with-dot"></div>
+        Made with passion for Indian traders
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }});
+  }, { threshold:0.1 });
+  obs.observe(document.getElementById('footerCta'));
+  obs.observe(document.getElementById('footerBody'));
+</script>
+</body>
+</html>

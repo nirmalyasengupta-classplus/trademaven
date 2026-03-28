@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Trade Maven – Method</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --g: #00e5a0;
+  --g2: rgba(0,229,160,0.12);
+  --bg: #000;
+  --text: #fff;
+  --muted: rgba(255,255,255,0.55);
+  --gb: rgba(0,229,160,0.18);
+}
+
+html, body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+
+/* ════════════════════════════
+   SECTION SHELL
+════════════════════════════ */
+.method-section {
+  position:relative; padding:100px 5% 110px;
+  overflow:hidden;
+}
+
+/* Top / bottom hairlines */
+.method-section::before, .method-section::after {
+  content:''; position:absolute; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent 0%, rgba(0,229,160,0.25) 30%, rgba(0,229,160,0.5) 50%, rgba(0,229,160,0.25) 70%, transparent 100%);
+  animation: hairlinePulse 4s ease-in-out infinite;
+}
+.method-section::before { top:0; }
+.method-section::after  { bottom:0; animation-delay:2s; }
+@keyframes hairlinePulse {
+  0%,100% { opacity:.5; } 50% { opacity:1; }
+}
+
+/* Background canvas */
+#m-cv { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+
+/* Hex grid overlay */
+#hex-cv { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity:0.4; }
+
+/* Drifting radial glow */
+.bg-glow {
+  position:absolute; top:-100px; left:50%;
+  transform:translateX(-50%);
+  width:1100px; height:700px;
+  background:radial-gradient(ellipse, rgba(0,229,160,0.09) 0%, rgba(0,229,160,0.03) 40%, transparent 70%);
+  pointer-events:none; z-index:0;
+  animation:glowDrift 10s ease-in-out infinite;
+}
+@keyframes glowDrift {
+  0%,100%{ transform:translateX(-50%) translateY(0) scale(1); }
+  50%    { transform:translateX(-50%) translateY(-30px) scale(1.05); }
+}
+
+/* Side vignettes */
+.vignette-l, .vignette-r {
+  position:absolute; top:0; bottom:0; width:200px; pointer-events:none; z-index:1;
+}
+.vignette-l { left:0;  background:linear-gradient(to right, rgba(0,0,0,0.7), transparent); }
+.vignette-r { right:0; background:linear-gradient(to left,  rgba(0,0,0,0.7), transparent); }
+
+/* ════════════════════════════
+   HEADING
+════════════════════════════ */
+.method-heading {
+  position:relative; z-index:2;
+  text-align:center; margin-bottom:72px;
+}
+
+.eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(0,229,160,0.06); border:1px solid rgba(0,229,160,0.22);
+  border-radius:100px; padding:6px 18px; margin-bottom:18px;
+  font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2.5px; text-transform:uppercase; color:var(--g);
+  opacity:0; transform:translateY(18px);
+  animation:fadeUp .6s .1s ease forwards;
+  position:relative; overflow:hidden;
+}
+/* Eyebrow shimmer */
+.eyebrow::after {
+  content:''; position:absolute; top:0; left:-120%; width:60%; height:100%;
+  background:linear-gradient(90deg, transparent, rgba(0,229,160,0.3), transparent);
+  animation:eyebrowShimmer 3s ease 1s infinite;
+}
+@keyframes eyebrowShimmer { 0%{left:-120%} 100%{left:220%} }
+
+.eyebrow .dot { width:5px; height:5px; background:var(--g); border-radius:50%; animation:pdot 2s ease-in-out infinite; }
+
+.section-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(40px,5.5vw,66px); line-height:1.05; letter-spacing:1px; color:#fff;
+  opacity:0; transform:translateY(22px);
+  animation:fadeUp .7s .25s ease forwards;
+}
+.section-title .accent {
+  color:var(--g);
+  text-shadow: 0 0 40px rgba(0,229,160,0.4), 0 0 80px rgba(0,229,160,0.15);
+}
+
+.section-desc {
+  font-size:15px; color:var(--muted); margin-top:16px;
+  max-width:540px; margin-left:auto; margin-right:auto; line-height:1.8;
+  opacity:0; transform:translateY(16px);
+  animation:fadeUp .7s .42s ease forwards;
+}
+
+/* Market tags row */
+.market-tags {
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  margin-top:20px;
+  opacity:0; transform:translateY(12px);
+  animation:fadeUp .6s .58s ease forwards;
+}
+.mtag {
+  font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:1.5px; text-transform:uppercase;
+  padding:4px 12px; border-radius:100px;
+  border:1px solid rgba(0,229,160,0.25);
+  color:rgba(255,255,255,0.5);
+  transition:all .3s;
+}
+.mtag:hover { border-color:var(--g); color:var(--g); background:rgba(0,229,160,0.06); }
+.mtag-sep { color:rgba(255,255,255,0.15); font-size:12px; }
+
+/* ════════════════════════════
+   BENTO GRID
+════════════════════════════ */
+.bento {
+  position:relative; z-index:2;
+  max-width:1140px; margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr 1.72fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:18px;
+  min-height:600px;
+}
+.bento-left  { grid-column:1; grid-row:1/3; display:flex; flex-direction:column; gap:18px; }
+.bento-center{ grid-column:2; grid-row:1/3; }
+.bento-right { grid-column:3; grid-row:1/3; display:flex; flex-direction:column; gap:18px; }
+
+/* ════════════════════════════
+   CARD
+════════════════════════════ */
+.method-card {
+  position:relative;
+  background:linear-gradient(148deg, rgba(8,24,16,0.95) 0%, rgba(4,12,8,0.98) 100%);
+  border:1px solid rgba(0,229,160,0.12);
+  border-radius:22px; overflow:hidden;
+  display:flex; flex-direction:column;
+  flex:1;
+  opacity:0; transform:translateY(32px) scale(0.98);
+  transition:opacity .6s ease, transform .6s ease, border-color .4s, box-shadow .4s;
+  will-change:transform;
+  /* Inner glow at rest */
+  box-shadow: inset 0 1px 0 rgba(0,229,160,0.06), 0 1px 3px rgba(0,0,0,0.5);
+}
+.method-card.in {
+  opacity:1; transform:translateY(0) scale(1);
+}
+
+/* Hover — premium lift with deep shadow + glow */
+.method-card.in:hover {
+  border-color: rgba(0,229,160,0.55);
+  box-shadow:
+    0 0 0 1px rgba(0,229,160,0.08),
+    0 20px 60px rgba(0,0,0,0.7),
+    0 0 60px rgba(0,229,160,0.16),
+    0 0 120px rgba(0,229,160,0.07),
+    inset 0 1px 0 rgba(0,229,160,0.12);
+  transform: translateY(-8px) scale(1.025);
+  transition: transform .5s cubic-bezier(.22,1,.36,1), border-color .35s, box-shadow .5s;
+}
+.bento-center .method-card.in:hover {
+  transform: translateY(-8px) scale(1.012);
+}
+.method-card.in:not(:hover) {
+  transition: transform .7s cubic-bezier(.22,1,.36,1), border-color .4s, box-shadow .6s, opacity .6s;
+}
+
+/* ── Top shimmer line ── */
+.card-shimmer {
+  position:absolute; top:0; left:-100%; width:100%; height:2px;
+  background:linear-gradient(90deg, transparent 0%, rgba(0,229,160,0.0) 20%, rgba(0,229,160,1) 50%, rgba(0,229,160,0.0) 80%, transparent 100%);
+  z-index:6; pointer-events:none;
+  transition:opacity .3s;
+  opacity:0;
+}
+.method-card.in:hover .card-shimmer {
+  opacity:1;
+  animation:shimmerSlide .6s ease forwards;
+}
+@keyframes shimmerSlide {
+  0%  { left:-100%; }
+  100%{ left:100%; }
+}
+/* Popular card always has shimmer */
+.card-always-shimmer .card-shimmer { opacity:1; animation:shimmerLoop 2.5s ease infinite; }
+@keyframes shimmerLoop {
+  0%  { left:-100%; opacity:1; }
+  70% { left:100%;  opacity:1; }
+  71% { left:-100%; opacity:0; }
+  100%{ left:-100%; opacity:0; }
+}
+
+/* ── Corner brackets (appear on hover) ── */
+.corner-tl, .corner-tr, .corner-bl, .corner-br {
+  position:absolute; width:14px; height:14px;
+  pointer-events:none; z-index:7;
+  opacity:0; transition:opacity .3s ease;
+}
+.method-card.in:hover .corner-tl,
+.method-card.in:hover .corner-tr,
+.method-card.in:hover .corner-bl,
+.method-card.in:hover .corner-br { opacity:1; }
+.corner-tl { top:10px;  left:10px;  border-top:1.5px solid var(--g); border-left:1.5px solid var(--g); }
+.corner-tr { top:10px;  right:10px; border-top:1.5px solid var(--g); border-right:1.5px solid var(--g); }
+.corner-bl { bottom:10px; left:10px;  border-bottom:1.5px solid var(--g); border-left:1.5px solid var(--g); }
+.corner-br { bottom:10px; right:10px; border-bottom:1.5px solid var(--g); border-right:1.5px solid var(--g); }
+
+/* ── Mouse spotlight ── */
+.card-spotlight {
+  position:absolute; inset:0; border-radius:22px;
+  pointer-events:none; z-index:3; opacity:0; transition:opacity .4s;
+}
+.method-card.in:hover .card-spotlight { opacity:1; }
+
+/* ── Live ticker inside card ── */
+.card-ticker {
+  position:absolute; bottom:0; left:0; right:0; height:28px;
+  background:rgba(0,229,160,0.04); border-top:1px solid rgba(0,229,160,0.08);
+  overflow:hidden; z-index:5; pointer-events:none;
+  opacity:0; transition:opacity .4s;
+}
+.method-card.in:hover .card-ticker { opacity:1; }
+.ticker-track {
+  display:flex; align-items:center; height:100%;
+  white-space:nowrap;
+  animation:tickerScroll 12s linear infinite;
+}
+.ticker-track span {
+  font-family:'Rajdhani',sans-serif; font-size:10px; font-weight:600;
+  letter-spacing:1px; text-transform:uppercase;
+  color:rgba(0,229,160,0.55); padding:0 16px;
+}
+.ticker-track .sep { color:rgba(0,229,160,0.2); padding:0 4px; }
+@keyframes tickerScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ── Scan line (center card) ── */
+.scan-line {
+  position:absolute; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent 0%, rgba(0,229,160,0.5) 30%, rgba(0,229,160,0.8) 50%, rgba(0,229,160,0.5) 70%, transparent 100%);
+  z-index:8; pointer-events:none;
+  box-shadow: 0 0 8px rgba(0,229,160,0.4);
+  animation: scanDown 5s ease-in-out infinite;
+  opacity:0.6;
+}
+@keyframes scanDown {
+  0%   { top:0%;   opacity:0; }
+  5%   { opacity:0.6; }
+  90%  { opacity:0.6; }
+  100% { top:100%; opacity:0; }
+}
+
+/* ── Card art ── */
+.card-art {
+  flex:1; position:relative; overflow:hidden; min-height:130px;
+}
+.card-art svg { position:absolute; inset:0; width:100%; height:100%; }
+.bento-center .card-art { min-height:340px; }
+
+/* SVG draw animation */
+.draw-line {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+}
+.candle-grow { transform-origin:bottom; transform:scaleY(0); }
+.dot-pop { opacity:0; transform:scale(0); transform-origin:center; }
+
+/* ── Card text ── */
+.card-text {
+  padding:22px 24px 26px;
+  position:relative; z-index:4; flex-shrink:0;
+}
+.card-num {
+  font-family:'Bebas Neue',sans-serif; font-size:10px; letter-spacing:3px;
+  color:rgba(0,229,160,0.35); margin-bottom:7px; display:block;
+}
+.card-title {
+  font-family:'Rajdhani',sans-serif; font-size:17px; font-weight:700;
+  color:#fff; margin-bottom:8px; line-height:1.25;
+  transition:color .3s;
+}
+.method-card:hover .card-title { color:var(--g); }
+.card-desc { font-size:12.5px; line-height:1.75; color:var(--muted); }
+.bento-center .card-title { font-size:22px; }
+.bento-center .card-desc  { font-size:13.5px; }
+
+.tag-row { display:flex; flex-wrap:wrap; gap:5px; margin-top:12px; }
+.tag {
+  font-family:'Rajdhani',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase;
+  padding:3px 9px; border-radius:100px;
+  background:rgba(0,229,160,0.06); border:1px solid rgba(0,229,160,0.18);
+  color:rgba(0,229,160,0.75);
+  transition:all .25s;
+}
+.method-card:hover .tag { border-color:rgba(0,229,160,0.35); color:var(--g); }
+
+/* ── Live indicator dot ── */
+.live-dot {
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:'Rajdhani',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--g);
+  margin-bottom:8px;
+}
+.live-dot::before {
+  content:''; width:6px; height:6px; border-radius:50%; background:var(--g);
+  animation:pdot 1.5s ease-in-out infinite;
+}
+
+/* ════════════════════════════
+   KEYFRAMES
+════════════════════════════ */
+@keyframes fadeUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pdot     { 0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,.6)} 50%{box-shadow:0 0 0 5px rgba(0,229,160,0)} }
+@keyframes drawAnim { to{ stroke-dashoffset:0; } }
+@keyframes candleGrow { to{ transform:scaleY(1); } }
+@keyframes dotPop   { to{ opacity:1; transform:scale(1); } }
+@keyframes areaFade { to{ opacity:1; } }
+
+/* Float pulses on each card at rest */
+@keyframes float0 { 0%,100%{transform:translateY(0)}   50%{transform:translateY(-5px)} }
+@keyframes float1 { 0%,100%{transform:translateY(-3px)} 50%{transform:translateY(2px)} }
+.method-card.in:not(:hover) { animation:none; }
+
+/* ════════════════════════════
+   RESPONSIVE
+════════════════════════════ */
+@media(max-width:860px){
+  .bento{ grid-template-columns:1fr 1fr; grid-template-rows:auto; min-height:auto; }
+  .bento-left{ grid-column:1; grid-row:auto; }
+  .bento-center{ grid-column:1/3; grid-row:auto; order:-1; }
+  .bento-right{ grid-column:2; grid-row:auto; }
+  .bento-center .card-art{ min-height:260px; }
+}
+@media(max-width:540px){
+  .bento{ grid-template-columns:1fr; }
+  .bento-left,.bento-center,.bento-right{ grid-column:1; grid-row:auto; }
+}
+</style>
+</head>
+<body>
+<section class="method-section">
+  <!-- Background layers -->
+  <canvas id="m-cv"></canvas>
+  <canvas id="hex-cv"></canvas>
+  <div class="bg-glow"></div>
+  <div class="vignette-l"></div>
+  <div class="vignette-r"></div>
+
+  <!-- Heading -->
+  <div class="method-heading">
+    <div class="eyebrow"><span class="dot"></span>The Trading System</div>
+    <h2 class="section-title">The <span class="accent">Trade Maven</span> Method</h2>
+    <p class="section-desc">A complete SMC + ICT hybrid methodology — applied across Stocks, Forex &amp; Crypto. Hindi/English instruction built for Indian retail traders.</p>
+    <div class="market-tags">
+      <span class="mtag">Nifty 50</span>
+      <span class="mtag-sep">·</span>
+      <span class="mtag">BankNifty</span>
+      <span class="mtag-sep">·</span>
+      <span class="mtag">XAUUSD</span>
+      <span class="mtag-sep">·</span>
+      <span class="mtag">Crypto</span>
+      <span class="mtag-sep">·</span>
+      <span class="mtag">Forex</span>
+    </div>
+  </div>
+
+  <!-- Bento -->
+  <div class="bento">
+
+    <!-- ═══ LEFT ═══ -->
+    <div class="bento-left">
+
+      <!-- Card 1: Price Action -->
+      <div class="method-card" id="mc0">
+        <div class="card-shimmer"></div>
+        <div class="card-spotlight"></div>
+        <div class="corner-tl"></div><div class="corner-tr"></div>
+        <div class="corner-bl"></div><div class="corner-br"></div>
+        <div class="card-art">
+          <svg viewBox="0 0 320 155" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="rg0" cx="50%" cy="55%" r="65%">
+                <stop offset="0%" stop-color="rgba(0,229,160,0.18)"/>
+                <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+              </radialGradient>
+              <linearGradient id="fd0" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="transparent"/>
+                <stop offset="100%" stop-color="#040c08"/>
+              </linearGradient>
+            </defs>
+            <rect width="320" height="155" fill="url(#rg0)"/>
+            <!-- Grid lines -->
+            <line x1="0" y1="40"  x2="320" y2="40"  stroke="rgba(0,229,160,0.06)" stroke-width="1"/>
+            <line x1="0" y1="80"  x2="320" y2="80"  stroke="rgba(0,229,160,0.06)" stroke-width="1"/>
+            <line x1="0" y1="120" x2="320" y2="120" stroke="rgba(0,229,160,0.06)" stroke-width="1"/>
+            <!-- Candles -->
+            <line x1="30"  y1="28" x2="30"  y2="125" stroke="#00e5a0" stroke-width="1" opacity=".3" class="draw-line"/>
+            <rect x="26"  y="58"  width="8" height="40" rx="1.5" fill="#00e5a0" opacity=".9" class="candle-grow"/>
+            <line x1="58"  y1="22" x2="58"  y2="112" stroke="#00e5a0" stroke-width="1" opacity=".3" class="draw-line"/>
+            <rect x="54"  y="40"  width="8" height="52" rx="1.5" fill="#00e5a0" opacity=".9" class="candle-grow"/>
+            <line x1="86"  y1="42" x2="86"  y2="136" stroke="#00e5a0" stroke-width="1" opacity=".3" class="draw-line"/>
+            <rect x="82"  y="66"  width="8" height="36" rx="1.5" fill="#ff5461" opacity=".85" class="candle-grow"/>
+            <line x1="114" y1="28" x2="114" y2="110" stroke="#00e5a0" stroke-width="1" opacity=".3" class="draw-line"/>
+            <rect x="110" y="46"  width="8" height="46" rx="1.5" fill="#00e5a0" opacity=".9" class="candle-grow"/>
+            <line x1="142" y1="20" x2="142" y2="106" stroke="#00e5a0" stroke-width="1" opacity=".3" class="draw-line"/>
+            <rect x="138" y="32"  width="8" height="58" rx="1.5" fill="#00e5a0" opacity=".9" class="candle-grow"/>
+            <line x1="170" y1="38" x2="170" y2="120" stroke="#00e5a0" stroke-width="1" opacity=".3" class="draw-line"/>
+            <rect x="166" y="56"  width="8" height="44" rx="1.5" fill="#ff5461" opacity=".85" class="candle-grow"/>
+            <line x1="198" y1="16" x2="198" y2="100" stroke="#00e5a0" stroke-width="1" opacity=".3" class="draw-line"/>
+            <rect x="194" y="28"  width="8" height="56" rx="1.5" fill="#00e5a0" opacity=".9" class="candle-grow"/>
+            <line x1="226" y1="26" x2="226" y2="108" stroke="#00e5a0" stroke-width="1" opacity=".3" class="draw-line"/>
+            <rect x="222" y="42"  width="8" height="50" rx="1.5" fill="#00e5a0" opacity=".9" class="candle-grow"/>
+            <line x1="254" y1="12" x2="254" y2="96"  stroke="#00e5a0" stroke-width="1" opacity=".3" class="draw-line"/>
+            <rect x="250" y="24"  width="8" height="58" rx="1.5" fill="#00e5a0" opacity=".9" class="candle-grow"/>
+            <line x1="282" y1="18" x2="282" y2="102" stroke="#00e5a0" stroke-width="1" opacity=".3" class="draw-line"/>
+            <rect x="278" y="32"  width="8" height="54" rx="1.5" fill="#ff5461" opacity=".85" class="candle-grow"/>
+            <rect width="320" height="52" y="103" fill="url(#fd0)"/>
+          </svg>
+        </div>
+        <div class="card-text">
+          <span class="card-num">01 — Foundation</span>
+          <div class="card-title">Price Action</div>
+          <p class="card-desc">The base layer — structure, swing highs/lows, trend identification &amp; candlestick reading before any advanced concept.</p>
+          <div class="tag-row">
+            <span class="tag">Nifty</span><span class="tag">BankNifty</span><span class="tag">Crypto</span>
+          </div>
+        </div>
+        <div class="card-ticker">
+          <div class="ticker-track">
+            <span>PRICE ACTION</span><span class="sep">·</span><span>SWING HIGH LOW</span><span class="sep">·</span><span>TREND STRUCTURE</span><span class="sep">·</span><span>CANDLESTICK PATTERNS</span><span class="sep">·</span>
+            <span>PRICE ACTION</span><span class="sep">·</span><span>SWING HIGH LOW</span><span class="sep">·</span><span>TREND STRUCTURE</span><span class="sep">·</span><span>CANDLESTICK PATTERNS</span><span class="sep">·</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: CRT -->
+      <div class="method-card" id="mc1">
+        <div class="card-shimmer"></div>
+        <div class="card-spotlight"></div>
+        <div class="corner-tl"></div><div class="corner-tr"></div>
+        <div class="corner-bl"></div><div class="corner-br"></div>
+        <div class="card-art">
+          <svg viewBox="0 0 320 155" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="rg1" cx="50%" cy="50%" r="60%">
+                <stop offset="0%" stop-color="rgba(0,229,160,0.15)"/>
+                <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+              </radialGradient>
+              <filter id="gl1"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <linearGradient id="fd1" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="transparent"/>
+                <stop offset="100%" stop-color="#040c08"/>
+              </linearGradient>
+              <linearGradient id="area1" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(0,229,160,0.2)"/>
+                <stop offset="100%" stop-color="rgba(0,229,160,0.01)"/>
+              </linearGradient>
+            </defs>
+            <rect width="320" height="155" fill="url(#rg1)"/>
+            <path id="ccc-area" d="M20,118 L55,88 70,104 95,58 115,78 138,42 158,62 178,36 198,56 218,28 244,48 268,20 292,38 L292,155 L20,155 Z" fill="url(#area1)" opacity="0" style="transition:opacity 1.4s ease"/>
+            <polyline class="draw-line" points="20,118 55,88 70,104 95,58 115,78 138,42 158,62 178,36 198,56 218,28 244,48 268,20 292,38" fill="none" stroke="#00e5a0" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" filter="url(#gl1)"/>
+            <!-- CRT Range box -->
+            <rect x="108" y="34" width="98" height="52" rx="3" fill="rgba(0,229,160,0.06)" stroke="rgba(0,229,160,0.4)" stroke-width="1" stroke-dasharray="5 3" class="dot-pop"/>
+            <circle cx="95"  cy="58" r="4.5" fill="none" stroke="#00e5a0" stroke-width="1.8" class="dot-pop"/>
+            <circle cx="178" cy="36" r="4.5" fill="none" stroke="#00e5a0" stroke-width="1.8" class="dot-pop"/>
+            <circle cx="268" cy="20" r="5"   fill="#00e5a0" class="dot-pop"/>
+            <rect width="320" height="52" y="103" fill="url(#fd1)"/>
+          </svg>
+        </div>
+        <div class="card-text">
+          <span class="card-num">04 — CRT</span>
+          <div class="card-title">Candle Range Theory</div>
+          <p class="card-desc">Precision entries using candle range manipulation — identify where price is engineered before the real move begins.</p>
+          <div class="tag-row">
+            <span class="tag">XAUUSD</span><span class="tag">Forex</span><span class="tag">Entries</span>
+          </div>
+        </div>
+        <div class="card-ticker">
+          <div class="ticker-track">
+            <span>CANDLE RANGE THEORY</span><span class="sep">·</span><span>PRECISION ENTRY</span><span class="sep">·</span><span>MANIPULATION</span><span class="sep">·</span><span>XAUUSD GOLD</span><span class="sep">·</span>
+            <span>CANDLE RANGE THEORY</span><span class="sep">·</span><span>PRECISION ENTRY</span><span class="sep">·</span><span>MANIPULATION</span><span class="sep">·</span><span>XAUUSD GOLD</span><span class="sep">·</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ CENTER: SMC ═══ -->
+    <div class="bento-center">
+      <div class="method-card card-always-shimmer" id="mc2" style="height:100%">
+        <div class="card-shimmer"></div>
+        <div class="card-spotlight"></div>
+        <div class="corner-tl"></div><div class="corner-tr"></div>
+        <div class="corner-bl"></div><div class="corner-br"></div>
+        <!-- Continuous scan line on the hero card -->
+        <div class="scan-line"></div>
+        <div class="card-art">
+          <svg viewBox="0 0 500 370" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="rg2" cx="50%" cy="40%" r="68%">
+                <stop offset="0%" stop-color="rgba(0,229,160,0.22)"/>
+                <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+              </radialGradient>
+              <filter id="gl2"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <linearGradient id="area2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(0,229,160,0.24)"/>
+                <stop offset="100%" stop-color="rgba(0,229,160,0.01)"/>
+              </linearGradient>
+              <linearGradient id="fd2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="transparent"/>
+                <stop offset="100%" stop-color="#040c08"/>
+              </linearGradient>
+            </defs>
+            <rect width="500" height="370" fill="url(#rg2)"/>
+            <!-- Fine grid -->
+            <g stroke="rgba(0,229,160,0.05)" stroke-width="1">
+              <line x1="0" y1="74"  x2="500" y2="74"/>
+              <line x1="0" y1="148" x2="500" y2="148"/>
+              <line x1="0" y1="222" x2="500" y2="222"/>
+              <line x1="0" y1="296" x2="500" y2="296"/>
+              <line x1="100" y1="0" x2="100" y2="370"/>
+              <line x1="200" y1="0" x2="200" y2="370"/>
+              <line x1="300" y1="0" x2="300" y2="370"/>
+              <line x1="400" y1="0" x2="400" y2="370"/>
+            </g>
+            <!-- Area fill -->
+            <path id="ros-area" d="M30,295 C80,272 100,155 152,134 C200,114 212,194 262,174 C312,154 322,74 372,54 C402,42 432,84 472,74 L472,360 L30,360 Z" fill="url(#area2)" opacity="0" style="transition:opacity 1.4s ease"/>
+            <!-- Main wave -->
+            <path class="draw-line" d="M30,295 C80,272 100,155 152,134 C200,114 212,194 262,174 C312,154 322,74 372,54 C402,42 432,84 472,74" fill="none" stroke="#00e5a0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#gl2)"/>
+            <!-- Echo wave -->
+            <path class="draw-line" d="M30,295 C60,290 90,238 122,216 C152,196 165,248 202,236 C242,222 256,170 292,158 C332,146 352,190 392,178 C422,170 447,206 472,194" fill="none" stroke="rgba(0,229,160,0.28)" stroke-width="1.5" stroke-dasharray="5 4" stroke-linecap="round"/>
+            <!-- Order Block zones -->
+            <rect x="88"  y="100" width="68" height="72" rx="4" fill="rgba(0,229,160,0.07)" stroke="rgba(0,229,160,0.4)" stroke-width="1" stroke-dasharray="4 3" class="dot-pop"/>
+            <rect x="240" y="140" width="68" height="72" rx="4" fill="rgba(255,84,97,0.06)"  stroke="rgba(255,84,97,0.35)" stroke-width="1" stroke-dasharray="4 3" class="dot-pop"/>
+            <rect x="348" y="26"  width="68" height="58" rx="4" fill="rgba(0,229,160,0.07)" stroke="rgba(0,229,160,0.4)" stroke-width="1" stroke-dasharray="4 3" class="dot-pop"/>
+            <!-- OB labels -->
+            <text x="96" y="116" font-family="'Rajdhani',sans-serif" font-size="9" fill="rgba(0,229,160,0.6)" font-weight="700" letter-spacing="1" class="dot-pop">OB</text>
+            <text x="248" y="156" font-family="'Rajdhani',sans-serif" font-size="9" fill="rgba(255,84,97,0.6)" font-weight="700" letter-spacing="1" class="dot-pop">FVG</text>
+            <text x="356" y="42" font-family="'Rajdhani',sans-serif" font-size="9" fill="rgba(0,229,160,0.6)" font-weight="700" letter-spacing="1" class="dot-pop">OB</text>
+            <!-- Peak dots -->
+            <circle cx="152" cy="134" r="6.5" fill="#00e5a0" class="dot-pop"/>
+            <circle cx="262" cy="174" r="6.5" fill="#00e5a0" class="dot-pop"/>
+            <circle cx="372" cy="54"  r="6.5" fill="#00e5a0" class="dot-pop"/>
+            <!-- Candles -->
+            <line x1="150" y1="108" x2="150" y2="162" stroke="#00e5a0" stroke-width="1.2" opacity=".6" class="draw-line"/>
+            <rect x="145" y="122" width="10" height="24" rx="1.5" fill="#00e5a0" opacity=".9" class="candle-grow"/>
+            <line x1="262" y1="148" x2="262" y2="200" stroke="#00e5a0" stroke-width="1.2" opacity=".6" class="draw-line"/>
+            <rect x="257" y="160" width="10" height="28" rx="1.5" fill="#ff5461" opacity=".9" class="candle-grow"/>
+            <line x1="372" y1="28"  x2="372" y2="80"  stroke="#00e5a0" stroke-width="1.2" opacity=".6" class="draw-line"/>
+            <rect x="367" y="40"  width="10" height="26" rx="1.5" fill="#00e5a0" opacity=".9" class="candle-grow"/>
+            <rect width="500" height="70" y="300" fill="url(#fd2)"/>
+          </svg>
+        </div>
+        <div class="card-text">
+          <div class="live-dot">Live Market Read</div>
+          <span class="card-num">02 — Core System</span>
+          <div class="card-title">Smart Money Concepts (SMC)</div>
+          <p class="card-desc">Understand how institutional players leave footprints in the market. Trade Maven's SMC framework covers Order Blocks, Fair Value Gaps (FVG), Liquidity Sweeps, BOS &amp; CHoCH — giving you the ability to see exactly what smart money is doing, not just price on a screen.</p>
+          <div class="tag-row">
+            <span class="tag">Order Blocks</span>
+            <span class="tag">FVG</span>
+            <span class="tag">Liquidity Sweeps</span>
+            <span class="tag">BOS / CHoCH</span>
+          </div>
+        </div>
+        <div class="card-ticker">
+          <div class="ticker-track">
+            <span>SMART MONEY CONCEPTS</span><span class="sep">·</span><span>ORDER BLOCKS</span><span class="sep">·</span><span>FAIR VALUE GAP</span><span class="sep">·</span><span>LIQUIDITY SWEEPS</span><span class="sep">·</span><span>BOS · CHoCH</span><span class="sep">·</span>
+            <span>SMART MONEY CONCEPTS</span><span class="sep">·</span><span>ORDER BLOCKS</span><span class="sep">·</span><span>FAIR VALUE GAP</span><span class="sep">·</span><span>LIQUIDITY SWEEPS</span><span class="sep">·</span><span>BOS · CHoCH</span><span class="sep">·</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ RIGHT ═══ -->
+    <div class="bento-right">
+
+      <!-- Card 4: ICT -->
+      <div class="method-card" id="mc3">
+        <div class="card-shimmer"></div>
+        <div class="card-spotlight"></div>
+        <div class="corner-tl"></div><div class="corner-tr"></div>
+        <div class="corner-bl"></div><div class="corner-br"></div>
+        <div class="card-art">
+          <svg viewBox="0 0 320 155" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="rg3" cx="50%" cy="38%" r="62%">
+                <stop offset="0%" stop-color="rgba(0,229,160,0.18)"/>
+                <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+              </radialGradient>
+              <filter id="gl3"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <linearGradient id="fd3" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="transparent"/>
+                <stop offset="100%" stop-color="#040c08"/>
+              </linearGradient>
+            </defs>
+            <rect width="320" height="155" fill="url(#rg3)"/>
+            <!-- Killzone shading -->
+            <rect x="52" y="20" width="44" height="115" rx="3" fill="rgba(0,229,160,0.06)" class="dot-pop"/>
+            <rect x="220" y="20" width="44" height="115" rx="3" fill="rgba(0,229,160,0.06)" class="dot-pop"/>
+            <text x="56" y="14" font-family="'Rajdhani',sans-serif" font-size="8" fill="rgba(0,229,160,0.5)" font-weight="700" letter-spacing="1" class="dot-pop">KZ</text>
+            <text x="224" y="14" font-family="'Rajdhani',sans-serif" font-size="8" fill="rgba(0,229,160,0.5)" font-weight="700" letter-spacing="1" class="dot-pop">KZ</text>
+            <polygon points="20,128 60,128 80,68 122,68 142,28 182,28 202,68 242,68 262,108 302,48 302,155 20,155" fill="rgba(0,229,160,0.05)"/>
+            <polyline class="draw-line" points="20,128 60,128 80,68 122,68 142,28 182,28 202,68 242,68 262,108 302,48" fill="none" stroke="#00e5a0" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" filter="url(#gl3)"/>
+            <circle cx="80"  cy="68"  r="4.5" fill="#00e5a0" class="dot-pop"/>
+            <circle cx="142" cy="28"  r="5.5" fill="#00e5a0" class="dot-pop"/>
+            <circle cx="202" cy="68"  r="4.5" fill="#00e5a0" class="dot-pop"/>
+            <circle cx="262" cy="108" r="4.5" fill="#00e5a0" class="dot-pop"/>
+            <circle cx="302" cy="48"  r="4.5" fill="#00e5a0" class="dot-pop"/>
+            <rect width="320" height="50" y="105" fill="url(#fd3)"/>
+          </svg>
+        </div>
+        <div class="card-text">
+          <span class="card-num">03 — ICT</span>
+          <div class="card-title">ICT (Inner Circle Trader)</div>
+          <p class="card-desc">Timing-based execution using Killzones, Dealing Range &amp; market maker models for optimal session entries.</p>
+          <div class="tag-row">
+            <span class="tag">Killzones</span><span class="tag">Session Bias</span>
+          </div>
+        </div>
+        <div class="card-ticker">
+          <div class="ticker-track">
+            <span>ICT CONCEPTS</span><span class="sep">·</span><span>KILLZONES</span><span class="sep">·</span><span>DEALING RANGE</span><span class="sep">·</span><span>MARKET MAKER MODEL</span><span class="sep">·</span>
+            <span>ICT CONCEPTS</span><span class="sep">·</span><span>KILLZONES</span><span class="sep">·</span><span>DEALING RANGE</span><span class="sep">·</span><span>MARKET MAKER MODEL</span><span class="sep">·</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5: Maven Concept -->
+      <div class="method-card" id="mc4">
+        <div class="card-shimmer"></div>
+        <div class="card-spotlight"></div>
+        <div class="corner-tl"></div><div class="corner-tr"></div>
+        <div class="corner-bl"></div><div class="corner-br"></div>
+        <div class="card-art">
+          <svg viewBox="0 0 320 155" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="rg4" cx="50%" cy="45%" r="60%">
+                <stop offset="0%" stop-color="rgba(0,229,160,0.16)"/>
+                <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+              </radialGradient>
+              <filter id="gl4"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <linearGradient id="fd4" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="transparent"/>
+                <stop offset="100%" stop-color="#040c08"/>
+              </linearGradient>
+            </defs>
+            <rect width="320" height="155" fill="url(#rg4)"/>
+            <line x1="18" y1="38" x2="302" y2="38" stroke="rgba(0,229,160,.2)" stroke-width="1" stroke-dasharray="5 4"/>
+            <polyline class="draw-line" points="20,48 55,108 90,58 125,108 162,38" fill="none" stroke="#00e5a0" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" filter="url(#gl4)"/>
+            <polyline class="draw-line" points="162,38 197,98 232,48 267,98 302,28" fill="none" stroke="#00e5a0" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" filter="url(#gl4)"/>
+            <circle cx="55"  cy="108" r="4" fill="none" stroke="#00e5a0" stroke-width="1.8" class="dot-pop"/>
+            <circle cx="90"  cy="58"  r="4" fill="none" stroke="#00e5a0" stroke-width="1.8" class="dot-pop"/>
+            <circle cx="125" cy="108" r="4" fill="none" stroke="#00e5a0" stroke-width="1.8" class="dot-pop"/>
+            <circle cx="162" cy="38"  r="5.5" fill="#00e5a0" class="dot-pop"/>
+            <circle cx="197" cy="98"  r="4" fill="none" stroke="#00e5a0" stroke-width="1.8" class="dot-pop"/>
+            <circle cx="232" cy="48"  r="4" fill="none" stroke="#00e5a0" stroke-width="1.8" class="dot-pop"/>
+            <circle cx="267" cy="98"  r="4" fill="none" stroke="#00e5a0" stroke-width="1.8" class="dot-pop"/>
+            <rect width="320" height="50" y="105" fill="url(#fd4)"/>
+          </svg>
+        </div>
+        <div class="card-text">
+          <span class="card-num">05 — Proprietary</span>
+          <div class="card-title">Maven Concept + CAB (VSA)</div>
+          <p class="card-desc">Trade Maven's exclusive framework — SMC, ICT &amp; Volume Spread Analysis unified into one edge.</p>
+          <div class="tag-row">
+            <span class="tag">CAB / VSA</span><span class="tag">Hybrid Edge</span>
+          </div>
+        </div>
+        <div class="card-ticker">
+          <div class="ticker-track">
+            <span>MAVEN CONCEPT</span><span class="sep">·</span><span>CAB CONCEPT</span><span class="sep">·</span><span>VOLUME SPREAD ANALYSIS</span><span class="sep">·</span><span>HYBRID EDGE</span><span class="sep">·</span>
+            <span>MAVEN CONCEPT</span><span class="sep">·</span><span>CAB CONCEPT</span><span class="sep">·</span><span>VOLUME SPREAD ANALYSIS</span><span class="sep">·</span><span>HYBRID EDGE</span><span class="sep">·</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+/* ════════════════════════════
+   1. PARTICLE BACKGROUND
+════════════════════════════ */
+(function(){
+  const cv  = document.getElementById('m-cv');
+  const ctx = cv.getContext('2d');
+  const sec = document.querySelector('.method-section');
+  let W, H, pts=[], meteors=[], t=0;
+
+  function resize(){
+    W = cv.width  = sec.offsetWidth;
+    H = cv.height = sec.offsetHeight;
+    pts=[];
+    const n = Math.floor(W*H/10000);
+    for(let i=0;i<n;i++) pts.push({
+      x:Math.random()*W, y:Math.random()*H,
+      vx:(Math.random()-.5)*.22, vy:(Math.random()-.5)*.15,
+      r:Math.random()*1.8+.4, a:Math.random()*.4+.1, ph:Math.random()*Math.PI*2
+    });
+  }
+  window.addEventListener('resize',resize); resize();
+
+  /* Spawn meteor */
+  function spawnMeteor(){
+    meteors.push({
+      x: Math.random()*W*1.2 - W*0.1,
+      y: -20,
+      len: Math.random()*120+60,
+      spd: Math.random()*4+3,
+      a: Math.random()*.6+.3,
+      life:0, max:60+Math.random()*40
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    /* Meteors */
+    if(Math.random()<.008) spawnMeteor();
+    for(let i=meteors.length-1;i>=0;i--){
+      const m=meteors[i]; m.x+=m.spd*.6; m.y+=m.spd; m.life++;
+      if(m.life>m.max){ meteors.splice(i,1); continue; }
+      const lr=m.life/m.max;
+      const a=m.a*(1-lr);
+      const grd=ctx.createLinearGradient(m.x-m.len*.6,m.y-m.len,m.x,m.y);
+      grd.addColorStop(0,'rgba(0,229,160,0)');
+      grd.addColorStop(1,`rgba(0,229,160,${a})`);
+      ctx.beginPath(); ctx.moveTo(m.x-m.len*.6,m.y-m.len); ctx.lineTo(m.x,m.y);
+      ctx.strokeStyle=grd; ctx.lineWidth=1.5; ctx.stroke();
+    }
+
+    /* Particles + connections */
+    const DIST=120;
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.ph+=.018;if(p.x<-10)p.x=W+10;if(p.x>W+10)p.x=-10;if(p.y<-10)p.y=H+10;if(p.y>H+10)p.y=-10;});
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<DIST){ ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(0,229,160,${(1-d/DIST)*.11})`;ctx.lineWidth=.7;ctx.stroke(); }
+      }
+    }
+    pts.forEach(p=>{
+      const pulse=.7+.3*Math.sin(p.ph);
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r*pulse,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,229,160,${p.a*pulse})`;
+      ctx.shadowBlur=10;ctx.shadowColor='rgba(0,229,160,.6)';
+      ctx.fill();ctx.shadowBlur=0;
+    });
+
+    t++; requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ════════════════════════════
+   2. HEX GRID
+════════════════════════════ */
+(function(){
+  const cv  = document.getElementById('hex-cv');
+  const ctx = cv.getContext('2d');
+  const sec = document.querySelector('.method-section');
+  let W, H, pulse=0;
+
+  function resize(){ W=cv.width=sec.offsetWidth; H=cv.height=sec.offsetHeight; }
+  window.addEventListener('resize',resize); resize();
+
+  function drawHex(cx,cy,size){
+    ctx.beginPath();
+    for(let i=0;i<6;i++){
+      const a=Math.PI/3*i - Math.PI/6;
+      const x=cx+size*Math.cos(a), y=cy+size*Math.sin(a);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pulse+=.008;
+    const size=38, r3=size*Math.sqrt(3);
+    const cols=Math.ceil(W/(r3))+2;
+    const rows=Math.ceil(H/(size*1.5))+2;
+    for(let row=-1;row<rows;row++){
+      for(let col=-1;col<cols;col++){
+        const x=col*r3+(row%2)*r3/2;
+        const y=row*size*1.5;
+        const distFromCenter=Math.sqrt((x-W/2)**2+(y-H/2)**2);
+        const maxDist=Math.sqrt(W**2+H**2)/2;
+        const base=0.018*(1-distFromCenter/maxDist);
+        const pulseFactor=0.5+0.5*Math.sin(pulse+distFromCenter*.008);
+        const alpha=base*pulseFactor;
+        if(alpha<0.002) continue;
+        drawHex(x,y,size-2);
+        ctx.strokeStyle=`rgba(0,229,160,${alpha})`;
+        ctx.lineWidth=.6;
+        ctx.stroke();
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ════════════════════════════
+   3. CARD REVEAL + SVG ANIMATIONS
+════════════════════════════ */
+(function(){
+  const delays=[0,150,60,0,150];
+
+  function animateCard(card){
+    if(card.classList.contains('in')) return;
+    card.classList.add('in');
+
+    /* Draw lines */
+    card.querySelectorAll('.draw-line').forEach((el,i)=>{
+      const len=el.getTotalLength?el.getTotalLength():900;
+      el.style.strokeDasharray=len;
+      el.style.strokeDashoffset=len;
+      setTimeout(()=>{
+        el.style.transition=`stroke-dashoffset ${1.5+i*.07}s cubic-bezier(.4,0,.2,1)`;
+        el.style.strokeDashoffset=0;
+      },100+i*35);
+    });
+
+    /* Area fills */
+    card.querySelectorAll('[id$="-area"]').forEach(el=>{
+      setTimeout(()=>{ el.style.opacity=1; },500);
+    });
+
+    /* Candles */
+    card.querySelectorAll('.candle-grow').forEach((el,i)=>{
+      el.style.transformOrigin='bottom';
+      el.style.transform='scaleY(0)';
+      setTimeout(()=>{
+        el.style.transition=`transform .55s cubic-bezier(.22,1,.36,1)`;
+        el.style.transform='scaleY(1)';
+      },200+i*60);
+    });
+
+    /* Dots */
+    card.querySelectorAll('.dot-pop').forEach((el,i)=>{
+      el.style.opacity=0; el.style.transform='scale(0)';
+      setTimeout(()=>{
+        el.style.transition=`opacity .4s ease, transform .45s cubic-bezier(.34,1.56,.64,1)`;
+        el.style.opacity=1; el.style.transform='scale(1)';
+      },650+i*90);
+    });
+  }
+
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      const idx=parseInt(e.target.id.replace('mc',''));
+      setTimeout(()=>animateCard(e.target), delays[idx]||0);
+      obs.unobserve(e.target);
+    });
+  },{ threshold:0.1 });
+
+  document.querySelectorAll('.method-card').forEach(c=>obs.observe(c));
+})();
+
+/* ════════════════════════════
+   4. SPOTLIGHT + RIPPLE
+════════════════════════════ */
+document.querySelectorAll('.method-card').forEach(card=>{
+  const spot=card.querySelector('.card-spotlight');
+  const isCenter=card.closest('.bento-center')!==null;
+
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const px=((e.clientX-r.left)/r.width)*100;
+    const py=((e.clientY-r.top)/r.height)*100;
+    const intensity=isCenter?0.18:0.13;
+    spot.style.background=`radial-gradient(600px circle at ${px}% ${py}%, rgba(0,229,160,${intensity}), rgba(0,229,160,0.04) 45%, transparent 70%)`;
+  });
+
+  card.addEventListener('mouseleave',()=>{ spot.style.background=''; });
+
+  /* Click ripple */
+  card.addEventListener('click',e=>{
+    const r=card.getBoundingClientRect();
+    const ripple=document.createElement('span');
+    ripple.style.cssText=`
+      position:absolute; border-radius:50%; pointer-events:none; z-index:10;
+      width:6px; height:6px; background:rgba(0,229,160,0.4);
+      left:${e.clientX-r.left-3}px; top:${e.clientY-r.top-3}px;
+      transform:scale(0); transition:transform .6s ease, opacity .6s ease;
+    `;
+    card.appendChild(ripple);
+    requestAnimationFrame(()=>{
+      ripple.style.transform=`scale(${Math.max(r.width,r.height)/3})`;
+      ripple.style.opacity='0';
+    });
+    setTimeout(()=>ripple.remove(),700);
+  });
+});
+</script>
+</body>
+</html>

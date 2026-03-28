@@ -1,0 +1,721 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Trade Maven â€“ Community & Notifications</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --g:#00e5a0; --bg:#000; --text:#fff;
+  --muted:rgba(255,255,255,0.52);
+  --card:rgba(8,18,12,0.97);
+  --border:rgba(0,229,160,0.12);
+}
+html, body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SECTION
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.social-section {
+  position:relative; padding:100px 5% 110px; overflow:hidden;
+}
+.social-section::before, .social-section::after {
+  content:''; position:absolute; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent 0%,rgba(0,229,160,0.35) 30%,rgba(0,229,160,0.65) 50%,rgba(0,229,160,0.35) 70%,transparent 100%);
+  animation:hairPulse 4s ease-in-out infinite;
+}
+.social-section::before { top:0; }
+.social-section::after  { bottom:0; animation-delay:2s; }
+@keyframes hairPulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+#sc-cv { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+
+.bg-glow {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:1100px; height:700px;
+  background:radial-gradient(ellipse,rgba(0,229,160,0.08) 0%,transparent 65%);
+  pointer-events:none; z-index:0;
+  animation:glowDrift 10s ease-in-out infinite;
+}
+@keyframes glowDrift { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-53%) scale(1.06)} }
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   HEADING
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.section-heading {
+  position:relative; z-index:2; text-align:center; margin-bottom:64px;
+  opacity:0; transform:translateY(22px); transition:opacity .7s, transform .7s;
+}
+.section-heading.in { opacity:1; transform:translateY(0); }
+
+.eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(0,229,160,0.07); border:1px solid rgba(0,229,160,0.22);
+  border-radius:100px; padding:6px 18px; margin-bottom:18px;
+  font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--g);
+  position:relative; overflow:hidden;
+}
+.eyebrow::after {
+  content:''; position:absolute; top:0; left:-120%; width:60%; height:100%;
+  background:linear-gradient(90deg,transparent,rgba(0,229,160,0.25),transparent);
+  animation:eyeShim 4s ease 1s infinite;
+}
+@keyframes eyeShim { 0%{left:-120%} 100%{left:220%} }
+.eyebrow .dot { width:5px; height:5px; background:var(--g); border-radius:50%; animation:pdot 2s ease-in-out infinite; }
+
+.section-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(38px,5vw,62px); line-height:1.05; letter-spacing:1px;
+}
+.section-title .accent {
+  color:var(--g);
+  text-shadow:0 0 40px rgba(0,229,160,0.4), 0 0 80px rgba(0,229,160,0.15);
+}
+.section-desc { font-size:15px; color:var(--muted); margin-top:14px; max-width:480px; margin-left:auto; margin-right:auto; line-height:1.8; }
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   GRID LAYOUT
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.sc-grid {
+  position:relative; z-index:2;
+  max-width:1100px; margin:0 auto;
+  display:grid; grid-template-columns:1fr 1.6fr;
+  gap:24px; align-items:start;
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SOCIAL CARDS (LEFT)
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.social-col {
+  display:flex; flex-direction:column; gap:18px;
+  opacity:0; transform:translateX(-24px); transition:opacity .7s .1s, transform .7s .1s;
+}
+.social-col.in { opacity:1; transform:translateX(0); }
+
+.social-card {
+  position:relative; border-radius:20px; overflow:hidden;
+  border:1px solid var(--border);
+  background:var(--card);
+  padding:32px 28px 28px;
+  display:flex; flex-direction:column; gap:20px;
+  transition:border-color .35s, box-shadow .35s, transform .45s cubic-bezier(.22,1,.36,1);
+  box-shadow:inset 0 1px 0 rgba(0,229,160,0.05), 0 2px 8px rgba(0,0,0,0.4);
+}
+.social-card:hover {
+  border-color:rgba(0,229,160,0.45);
+  box-shadow:0 0 0 1px rgba(0,229,160,0.07), 0 20px 60px rgba(0,0,0,0.7), 0 0 50px rgba(0,229,160,0.14);
+  transform:translateY(-4px);
+}
+.sc-shimmer {
+  position:absolute; top:0; left:-100%; width:100%; height:1.5px;
+  background:linear-gradient(90deg,transparent,var(--g),transparent);
+  z-index:5; opacity:0;
+}
+.social-card:hover .sc-shimmer { opacity:1; animation:shimSlide .55s ease forwards; }
+@keyframes shimSlide { 0%{left:-100%} 100%{left:100%} }
+
+.sc-header { display:flex; align-items:center; gap:16px; }
+.sc-icon-wrap {
+  width:52px; height:52px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  border:1px solid rgba(0,229,160,0.2);
+  transition:border-color .3s, box-shadow .3s;
+}
+.social-card:hover .sc-icon-wrap {
+  border-color:rgba(0,229,160,0.5);
+  box-shadow:0 0 20px rgba(0,229,160,0.2);
+}
+.sc-icon-wrap svg { width:26px; height:26px; }
+.sc-info { display:flex; flex-direction:column; gap:3px; }
+.sc-name { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1.5px; color:#fff; }
+.sc-handle { font-family:'Rajdhani',sans-serif; font-size:12px; color:var(--g); font-weight:600; letter-spacing:.5px; }
+
+.sc-desc { font-size:13px; color:var(--muted); line-height:1.7; }
+
+.sc-stats { display:flex; gap:20px; }
+.sc-stat { display:flex; flex-direction:column; gap:2px; }
+.sc-stat-val { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--g); letter-spacing:1px; line-height:1; }
+.sc-stat-lbl { font-size:10px; color:var(--muted); letter-spacing:.5px; text-transform:uppercase; }
+
+.btn-join {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:13px 24px; border-radius:10px;
+  font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; letter-spacing:.5px;
+  text-decoration:none; transition:all .25s; border:none; cursor:pointer; width:100%;
+}
+.btn-tg {
+  background:linear-gradient(135deg,#0088cc,#006fa8); color:#fff;
+}
+.btn-tg:hover { background:linear-gradient(135deg,#00a8f3,#0088cc); transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,136,204,0.4); }
+.btn-wa {
+  background:linear-gradient(135deg,#25d366,#1ebe5c); color:#fff;
+}
+.btn-wa:hover { background:linear-gradient(135deg,#2ee86e,#25d366); transform:translateY(-2px); box-shadow:0 8px 28px rgba(37,211,102,0.4); }
+.btn-join svg { width:16px; height:16px; }
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   NOTIFICATIONS (RIGHT)
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.notif-col {
+  opacity:0; transform:translateX(24px); transition:opacity .7s .2s, transform .7s .2s;
+}
+.notif-col.in { opacity:1; transform:translateX(0); }
+
+.notif-card {
+  position:relative; border-radius:20px; overflow:hidden;
+  border:1px solid var(--border);
+  background:var(--card);
+  box-shadow:inset 0 1px 0 rgba(0,229,160,0.05), 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.notif-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:22px 24px 20px;
+  border-bottom:1px solid rgba(0,229,160,0.08);
+}
+.notif-title-row { display:flex; align-items:center; gap:10px; }
+.notif-icon {
+  width:36px; height:36px; border-radius:10px;
+  background:rgba(0,229,160,0.1); border:1px solid rgba(0,229,160,0.2);
+  display:flex; align-items:center; justify-content:center;
+}
+.notif-icon svg { width:16px; height:16px; }
+.notif-title { font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700; color:#fff; }
+.notif-subtitle { font-size:11px; color:var(--muted); margin-top:1px; }
+
+.live-pill {
+  display:flex; align-items:center; gap:5px;
+  background:rgba(0,229,160,0.08); border:1px solid rgba(0,229,160,0.2);
+  border-radius:100px; padding:4px 10px;
+  font-family:'Rajdhani',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase; color:var(--g);
+}
+.live-pill::before {
+  content:''; width:5px; height:5px; border-radius:50%; background:var(--g);
+  animation:pdot 1.5s ease-in-out infinite;
+}
+
+/* Notification list */
+.notif-list {
+  padding:16px 24px; display:flex; flex-direction:column; gap:10px;
+  max-height:360px; overflow-y:auto;
+}
+.notif-list::-webkit-scrollbar { width:3px; }
+.notif-list::-webkit-scrollbar-track { background:transparent; }
+.notif-list::-webkit-scrollbar-thumb { background:rgba(0,229,160,0.2); border-radius:2px; }
+
+.notif-item {
+  position:relative; padding:14px 16px;
+  background:rgba(0,229,160,0.04); border:1px solid rgba(0,229,160,0.1);
+  border-radius:12px;
+  border-left:3px solid var(--g);
+  animation:notifIn .4s ease forwards;
+  opacity:0;
+}
+@keyframes notifIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.notif-item-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.notif-type {
+  font-family:'Rajdhani',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:1.2px; text-transform:uppercase; color:var(--g);
+}
+.notif-time { font-size:10px; color:var(--muted); }
+.notif-msg { font-size:13px; color:rgba(255,255,255,0.82); line-height:1.6; }
+
+.notif-delete {
+  position:absolute; top:10px; right:10px;
+  background:none; border:none; color:rgba(255,255,255,0.15);
+  cursor:pointer; font-size:14px; line-height:1;
+  transition:color .2s; padding:2px 4px; border-radius:4px;
+  display:none;
+}
+.notif-item:hover .notif-delete { display:block; }
+.notif-delete:hover { color:#ff5461; background:rgba(255,84,97,0.08); }
+
+.notif-empty {
+  text-align:center; padding:40px 20px;
+  font-size:13px; color:var(--muted);
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+}
+.notif-empty svg { width:32px; height:32px; opacity:.25; }
+
+/* Add notification button */
+.notif-footer {
+  padding:16px 24px;
+  border-top:1px solid rgba(0,229,160,0.08);
+}
+.btn-add-notif {
+  width:100%; padding:12px 20px; border-radius:10px;
+  background:rgba(0,229,160,0.08); border:1px solid rgba(0,229,160,0.2);
+  color:var(--g); font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700;
+  letter-spacing:.5px; cursor:pointer; transition:all .25s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.btn-add-notif:hover { background:rgba(0,229,160,0.14); border-color:rgba(0,229,160,0.4); transform:translateY(-1px); }
+.btn-add-notif svg { width:14px; height:14px; }
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   PASSWORD MODAL
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.modal-overlay {
+  position:fixed; inset:0; z-index:99999;
+  background:rgba(0,0,0,0);
+  display:flex; align-items:center; justify-content:center;
+  pointer-events:none; transition:background .3s;
+}
+.modal-overlay.open {
+  pointer-events:all; background:rgba(0,0,0,0.88);
+}
+.modal-box {
+  background:linear-gradient(148deg,#0a1a10,#050e08);
+  border:1px solid rgba(0,229,160,0.25); border-radius:20px;
+  padding:36px 36px 32px; width:100%; max-width:420px;
+  box-shadow:0 0 0 1px rgba(0,229,160,0.07), 0 40px 100px rgba(0,0,0,0.9), 0 0 60px rgba(0,229,160,0.12);
+  transform:scale(0.85) translateY(20px); opacity:0;
+  transition:transform .4s cubic-bezier(.22,1,.36,1), opacity .3s;
+  position:relative;
+}
+.modal-overlay.open .modal-box { transform:scale(1) translateY(0); opacity:1; }
+.modal-shimmer {
+  position:absolute; top:0; left:0; right:0; height:2px; border-radius:20px 20px 0 0;
+  background:linear-gradient(90deg,transparent,var(--g),transparent);
+}
+
+.modal-icon {
+  width:52px; height:52px; border-radius:14px; margin:0 auto 20px;
+  background:rgba(0,229,160,0.1); border:1px solid rgba(0,229,160,0.25);
+  display:flex; align-items:center; justify-content:center;
+}
+.modal-icon svg { width:22px; height:22px; }
+.modal-title { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:1px; text-align:center; margin-bottom:6px; }
+.modal-sub { font-size:13px; color:var(--muted); text-align:center; margin-bottom:24px; line-height:1.6; }
+
+/* Step 1 â€” password */
+.step { display:none; }
+.step.active { display:block; }
+
+.field-label { font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--g); margin-bottom:8px; }
+.field-input {
+  width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px; padding:12px 16px; font-size:14px; color:#fff;
+  font-family:'DM Sans',sans-serif; outline:none; transition:border-color .2s;
+  margin-bottom:8px;
+}
+.field-input::placeholder { color:var(--muted); }
+.field-input:focus { border-color:rgba(0,229,160,0.45); }
+.field-textarea {
+  resize:vertical; min-height:100px; max-height:200px;
+}
+
+.field-error { font-size:12px; color:#ff5461; margin-bottom:12px; display:none; }
+.field-error.show { display:block; }
+
+.type-row { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.type-btn {
+  padding:6px 14px; border-radius:100px;
+  font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase; cursor:pointer;
+  border:1px solid rgba(0,229,160,0.2); background:rgba(0,229,160,0.05); color:var(--muted);
+  transition:all .2s;
+}
+.type-btn.selected { background:rgba(0,229,160,0.15); border-color:var(--g); color:var(--g); }
+
+.modal-actions { display:flex; gap:10px; margin-top:20px; }
+.btn-modal-confirm {
+  flex:1; padding:12px 20px; border-radius:10px;
+  background:var(--g); color:#000; border:none;
+  font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; letter-spacing:.5px;
+  cursor:pointer; transition:all .25s;
+}
+.btn-modal-confirm:hover { background:#00ffb3; transform:translateY(-1px); box-shadow:0 6px 20px rgba(0,229,160,0.4); }
+.btn-modal-cancel {
+  padding:12px 20px; border-radius:10px;
+  background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.1);
+  font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:600;
+  cursor:pointer; transition:all .2s;
+}
+.btn-modal-cancel:hover { border-color:rgba(255,255,255,0.25); color:#fff; }
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SUCCESS TOAST
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+#toast {
+  position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:rgba(0,229,160,0.12); border:1px solid rgba(0,229,160,0.35);
+  color:var(--g); border-radius:100px; padding:10px 22px;
+  font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700; letter-spacing:.5px;
+  z-index:999999; opacity:0; pointer-events:none;
+  transition:opacity .3s, transform .3s;
+  display:flex; align-items:center; gap:8px;
+}
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+#toast::before { content:'âœ“'; font-size:14px; }
+
+@keyframes pdot { 0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,.5)} 50%{box-shadow:0 0 0 4px rgba(0,229,160,0)} }
+
+@media(max-width:860px){
+  .sc-grid{grid-template-columns:1fr;} .notif-list{max-height:280px;}
+}
+</style>
+</head>
+<body>
+
+<!-- â•â• PASSWORD + POST MODAL â•â• -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-shimmer"></div>
+
+    <!-- Step 1: Password -->
+    <div class="step active" id="step1">
+      <div class="modal-icon">
+        <svg viewBox="0 0 22 22" fill="none" stroke="#00e5a0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="10" width="16" height="10" rx="3"/>
+          <path d="M7 10V7a4 4 0 018 0v3"/>
+          <circle cx="11" cy="15" r="1.2" fill="#00e5a0"/>
+        </svg>
+      </div>
+      <div class="modal-title">Admin Access</div>
+      <div class="modal-sub">Enter the admin password to post a notification.</div>
+      <div class="field-label">Password</div>
+      <input class="field-input" type="password" id="pwInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkPassword()"/>
+      <div class="field-error" id="pwError">Incorrect password. Please try again.</div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-modal-confirm" onclick="checkPassword()">Continue â†’</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Post notification -->
+    <div class="step" id="step2">
+      <div class="modal-title">Post Notification</div>
+      <div class="modal-sub" style="margin-bottom:18px">This will appear live on the website instantly.</div>
+
+      <div class="field-label">Type</div>
+      <div class="type-row">
+        <button class="type-btn selected" onclick="selectType(this,'ðŸ“¢ Announcement')">ðŸ“¢ Announcement</button>
+        <button class="type-btn" onclick="selectType(this,'ðŸ“ˆ Trade Alert')">ðŸ“ˆ Trade Alert</button>
+        <button class="type-btn" onclick="selectType(this,'ðŸŽ“ Course Update')">ðŸŽ“ Course Update</button>
+        <button class="type-btn" onclick="selectType(this,'âš¡ Market Update')">âš¡ Market Update</button>
+      </div>
+
+      <div class="field-label">Message</div>
+      <textarea class="field-input field-textarea" id="notifMsg" placeholder="Type your notification here..."></textarea>
+      <div class="field-error" id="msgError">Please write a message before posting.</div>
+
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-modal-confirm" onclick="postNotification()">Post Now â†’</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Delete â€” password confirmation -->
+    <div class="step" id="step3">
+      <div class="modal-icon" style="background:rgba(255,84,97,0.1);border-color:rgba(255,84,97,0.25)">
+        <svg viewBox="0 0 22 22" fill="none" stroke="#ff5461" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 19 6"/><path d="M8 6V4h6v2"/><path d="M19 6l-1 13a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+          <line x1="10" y1="11" x2="10" y2="16"/><line x1="14" y1="11" x2="14" y2="16"/>
+        </svg>
+      </div>
+      <div class="modal-title" style="color:#ff5461">Delete Notification</div>
+      <div class="modal-sub">Enter the admin password to permanently delete this notification.</div>
+      <div class="field-label">Password</div>
+      <input class="field-input" type="password" id="delPwInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkPasswordDelete()"/>
+      <div class="field-error" id="delPwError">Incorrect password. Please try again.</div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-modal-confirm" style="background:#ff5461" onclick="checkPasswordDelete()">Delete â†’</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast">Notification posted successfully</div>
+
+<!-- â•â• SECTION â•â• -->
+<section class="social-section">
+  <canvas id="sc-cv"></canvas>
+  <div class="bg-glow"></div>
+
+  <div class="section-heading" id="scHeading">
+    <div class="eyebrow"><span class="dot"></span>Join the Community</div>
+    <h2 class="section-title">Stay Connected.<br>Stay <span class="accent">One Step Ahead.</span></h2>
+    <p class="section-desc">Join Trade Maven's live community for real-time signals, market updates, and direct access to Yuvraj Prajapat.</p>
+  </div>
+
+  <div class="sc-grid">
+
+    <!-- â• SOCIAL LEFT â• -->
+    <div class="social-col" id="socialCol">
+
+      <!-- Telegram -->
+      <div class="social-card">
+        <div class="sc-shimmer"></div>
+        <div class="sc-header">
+          <div class="sc-icon-wrap" style="background:linear-gradient(135deg,rgba(0,136,204,0.15),rgba(0,136,204,0.05))">
+            <svg viewBox="0 0 24 24" fill="#0088cc"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.9 8.2l-2 9.4c-.1.6-.5.8-1 .5l-2.8-2-1.3 1.3c-.2.2-.3.3-.6.3l.2-2.8 4.8-4.3c.2-.2 0-.3-.3-.1L7.1 14.6l-2.7-.9c-.6-.2-.6-.6.1-.8l10.6-4.1c.5-.2 1 .1.8.8z"/></svg>
+          </div>
+          <div class="sc-info">
+            <div class="sc-name">Telegram</div>
+            <div class="sc-handle">@TradeMaven</div>
+          </div>
+        </div>
+        <p class="sc-desc">Get live trade alerts, real-time market analysis, and exclusive content directly on Telegram. Maven Bhai posts setups before they happen.</p>
+        <div class="sc-stats">
+          <div class="sc-stat"><div class="sc-stat-val">LIVE</div><div class="sc-stat-lbl">Signals</div></div>
+          <div class="sc-stat"><div class="sc-stat-val">FREE</div><div class="sc-stat-lbl">To Join</div></div>
+          <div class="sc-stat"><div class="sc-stat-val">24/7</div><div class="sc-stat-lbl">Updates</div></div>
+        </div>
+        <a href="https://t.me/itrademaven" target="_blank" class="btn-join btn-tg">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.9 8.2l-2 9.4c-.1.6-.5.8-1 .5l-2.8-2-1.3 1.3c-.2.2-.3.3-.6.3l.2-2.8 4.8-4.3c.2-.2 0-.3-.3-.1L7.1 14.6l-2.7-.9c-.6-.2-.6-.6.1-.8l10.6-4.1c.5-.2 1 .1.8.8z"/></svg>
+          Join on Telegram
+        </a>
+      </div>
+
+      <!-- WhatsApp -->
+      <div class="social-card">
+        <div class="sc-shimmer"></div>
+        <div class="sc-header">
+          <div class="sc-icon-wrap" style="background:linear-gradient(135deg,rgba(37,211,102,0.15),rgba(37,211,102,0.05))">
+            <svg viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </div>
+          <div class="sc-info">
+            <div class="sc-name">WhatsApp</div>
+            <div class="sc-handle">Trade Maven Community</div>
+          </div>
+        </div>
+        <p class="sc-desc">Join the WhatsApp broadcast for quick market updates, course announcements, and important alerts â€” directly on your phone.</p>
+        <div class="sc-stats">
+          <div class="sc-stat"><div class="sc-stat-val">INSTANT</div><div class="sc-stat-lbl">Alerts</div></div>
+          <div class="sc-stat"><div class="sc-stat-val">DIRECT</div><div class="sc-stat-lbl">From Maven</div></div>
+        </div>
+        <a href="https://wa.me/message/TRADEMAVEN" target="_blank" class="btn-join btn-wa">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Join on WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <!-- â• NOTIFICATIONS RIGHT â• -->
+    <div class="notif-col" id="notifCol">
+      <div class="notif-card">
+        <div class="notif-header">
+          <div class="notif-title-row">
+            <div class="notif-icon">
+              <svg viewBox="0 0 16 16" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 1a5 5 0 015 5v2l1.5 2.5H1.5L3 8V6a5 5 0 015-5z"/>
+                <path d="M6.5 13a1.5 1.5 0 003 0"/>
+              </svg>
+            </div>
+            <div>
+              <div class="notif-title">Live Notifications</div>
+              <div class="notif-subtitle">Posted by Trade Maven</div>
+            </div>
+          </div>
+          <div class="live-pill">Live</div>
+        </div>
+
+        <div class="notif-list" id="notifList">
+          <div class="notif-empty" id="notifEmpty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
+            </svg>
+            No notifications yet.<br/>Check back soon.
+          </div>
+        </div>
+
+        <div class="notif-footer">
+          <button class="btn-add-notif" onclick="openModal()">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v12M2 8h12"/></svg>
+            Post a Notification
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+/* â•â• PARTICLE BG â•â• */
+(function(){
+  const cv=document.getElementById('sc-cv'),ctx=cv.getContext('2d');
+  const sec=document.querySelector('.social-section');
+  let W,H,pts=[],t=0;
+  function resize(){W=cv.width=sec.offsetWidth;H=cv.height=sec.offsetHeight;pts=[];const n=Math.floor(W*H/11000);for(let i=0;i<n;i++)pts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.14,r:Math.random()*1.5+.4,a:Math.random()*.3+.08,ph:Math.random()*Math.PI*2});}
+  window.addEventListener('resize',resize);resize();
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const D=110;
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.ph+=.016;if(p.x<-10)p.x=W+10;if(p.x>W+10)p.x=-10;if(p.y<-10)p.y=H+10;if(p.y>H+10)p.y=-10;});
+    for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<D){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(0,229,160,${(1-d/D)*.09})`;ctx.lineWidth=.6;ctx.stroke();}}}
+    pts.forEach(p=>{const pulse=.7+.3*Math.sin(p.ph);ctx.beginPath();ctx.arc(p.x,p.y,p.r*pulse,0,Math.PI*2);ctx.fillStyle=`rgba(0,229,160,${p.a*pulse})`;ctx.shadowBlur=8;ctx.shadowColor='rgba(0,229,160,.6)';ctx.fill();ctx.shadowBlur=0;});
+    t++;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* â•â• SCROLL REVEAL â•â• */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}});
+},{threshold:0.1});
+['scHeading','socialCol','notifCol'].forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el);});
+
+/* â•â• NOTIFICATIONS â€” stored in localStorage â•â• */
+const STORE_KEY='tm_notifications';
+let selectedType='ðŸ“¢ Announcement';
+
+function getNotifs(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY))||[]; }catch(e){ return []; } }
+function saveNotifs(arr){ localStorage.setItem(STORE_KEY,JSON.stringify(arr)); }
+
+function timeAgo(ts){
+  const diff=Date.now()-ts;
+  const m=Math.floor(diff/60000);
+  if(m<1)return 'Just now';
+  if(m<60)return `${m}m ago`;
+  const h=Math.floor(m/60);
+  if(h<24)return `${h}h ago`;
+  return `${Math.floor(h/24)}d ago`;
+}
+
+function renderNotifs(){
+  const list=document.getElementById('notifList');
+  const empty=document.getElementById('notifEmpty');
+  const notifs=getNotifs();
+  /* Remove old items */
+  list.querySelectorAll('.notif-item').forEach(el=>el.remove());
+  if(notifs.length===0){ empty.style.display='flex'; return; }
+  empty.style.display='none';
+  notifs.slice().reverse().forEach((n,i)=>{
+    const item=document.createElement('div');
+    item.className='notif-item';
+    item.style.animationDelay=`${i*0.06}s`;
+    item.innerHTML=`
+      <div class="notif-item-top">
+        <span class="notif-type">${n.type}</span>
+        <span class="notif-time">${timeAgo(n.ts)}</span>
+      </div>
+      <div class="notif-msg">${n.msg}</div>
+      <button class="notif-delete" onclick="deleteNotif(${n.id})" title="Delete">âœ•</button>
+    `;
+    list.appendChild(item);
+  });
+}
+
+let pendingDeleteId=null;
+
+/* Show only one step at a time */
+function showStep(id){
+  ['step1','step2','step3'].forEach(s=>{
+    const el=document.getElementById(s);
+    if(el) el.classList.toggle('active', s===id);
+  });
+}
+
+function deleteNotif(id){
+  pendingDeleteId=id;
+  document.getElementById('delPwInput').value='';
+  document.getElementById('delPwError').classList.remove('show');
+  showStep('step3');
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('delPwInput').focus(),350);
+}
+
+function checkPasswordDelete(){
+  const val=document.getElementById('delPwInput').value.trim();
+  if(val==='6166'){
+    const notifs=getNotifs().filter(n=>n.id!==pendingDeleteId);
+    saveNotifs(notifs);
+    pendingDeleteId=null;
+    closeModal();
+    renderNotifs();
+    showToast('Notification deleted');
+  } else {
+    document.getElementById('delPwError').classList.add('show');
+    document.getElementById('delPwInput').value='';
+    document.getElementById('delPwInput').focus();
+  }
+}
+
+/* â•â• MODAL â€” POST â•â• */
+function openModal(){
+  pendingDeleteId=null;
+  document.getElementById('pwInput').value='';
+  document.getElementById('pwError').classList.remove('show');
+  document.getElementById('notifMsg').value='';
+  document.getElementById('msgError').classList.remove('show');
+  /* Reset type selection */
+  document.querySelectorAll('.type-btn').forEach((b,i)=>b.classList.toggle('selected',i===0));
+  selectedType='ðŸ“¢ Announcement';
+  showStep('step1');
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('pwInput').focus(),350);
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function checkPassword(){
+  const val=document.getElementById('pwInput').value.trim();
+  if(val==='6166'){
+    document.getElementById('pwError').classList.remove('show');
+    showStep('step2');
+    setTimeout(()=>document.getElementById('notifMsg').focus(),100);
+  } else {
+    document.getElementById('pwError').classList.add('show');
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+  }
+}
+
+function selectType(btn, type){
+  document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedType=type;
+}
+
+function postNotification(){
+  const msg=document.getElementById('notifMsg').value.trim();
+  if(!msg){ document.getElementById('msgError').classList.add('show'); return; }
+  document.getElementById('msgError').classList.remove('show');
+  const notifs=getNotifs();
+  notifs.push({ id:Date.now(), type:selectedType, msg, ts:Date.now() });
+  saveNotifs(notifs);
+  closeModal();
+  renderNotifs();
+  showToast('Notification posted successfully');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+/* Close modal on backdrop click */
+document.getElementById('modalOverlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('modalOverlay'))closeModal();
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeModal(); });
+
+/* Init */
+renderNotifs();
+
+/* Refresh time labels every minute */
+setInterval(renderNotifs,60000);
+
+/* Height reporter for Wix */
+function reportHeight(){const h=document.querySelector('.social-section')?.scrollHeight||window.innerHeight;window.parent.postMessage({type:'wix-height',height:h},'*');}
+window.addEventListener('load',reportHeight);window.addEventListener('resize',reportHeight);setTimeout(reportHeight,300);
+</script>
+
+<script src="nav.js"></script>
+
+</body>
+</html>

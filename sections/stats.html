@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Trade Maven – Stats</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #00e5a0;
+    --bg: #000000;
+    --card-bg: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.07);
+    --green-border: rgba(0,229,160,0.15);
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.5);
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  .stats-section {
+    position: relative;
+    padding: 64px 5%;
+    overflow: hidden;
+  }
+
+  .stats-section::before,
+  .stats-section::after {
+    content: '';
+    position: absolute;
+    left: 5%; right: 5%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--green-border), transparent);
+  }
+  .stats-section::before { top: 0; }
+  .stats-section::after  { bottom: 0; }
+
+  .bg-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px; height: 300px;
+    background: radial-gradient(ellipse, rgba(0,229,160,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .stats-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+
+  .stat-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 24px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    transition: border-color 0.3s, background 0.3s;
+    cursor: default;
+    overflow: hidden;
+  }
+
+  .stat-card:first-child { border-radius: 16px 0 0 16px; }
+  .stat-card:last-child  { border-radius: 0 16px 16px 0; }
+
+  .stat-card:hover {
+    background: rgba(0,229,160,0.04);
+    border-color: var(--green-border);
+    z-index: 2;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20%; right: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 0 0 4px 4px;
+  }
+  .stat-card:hover::before { opacity: 1; }
+
+  .stat-card:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -1px; top: 20%; bottom: 20%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--border), transparent);
+  }
+
+  .stat-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: rgba(0,229,160,0.08);
+    border: 1px solid rgba(0,229,160,0.18);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .stat-card:hover .stat-icon {
+    background: rgba(0,229,160,0.14);
+    border-color: rgba(0,229,160,0.35);
+  }
+  .stat-icon svg { width: 20px; height: 20px; }
+
+  .stat-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 3.8vw, 54px);
+    line-height: 1;
+    letter-spacing: 1px;
+    color: #ffffff;
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    margin-bottom: 10px;
+  }
+  .stat-number .suffix {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.65em;
+    color: var(--green);
+    letter-spacing: 1px;
+  }
+  .stat-count { display: inline-block; }
+
+  .stat-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .stat-bar {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    width: 0%;
+    transition: width 1.4s cubic-bezier(.4,0,.2,1);
+    opacity: 0.5;
+  }
+  .stat-card.animated .stat-bar { width: 100%; }
+
+  @media (max-width: 768px) {
+    .stats-inner {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+    }
+    .stat-card:first-child  { border-radius: 16px 0 0 0; }
+    .stat-card:last-child   { border-radius: 0 0 16px 0; }
+    .stat-card:nth-child(2) { border-radius: 0 16px 0 0; }
+    .stat-card:nth-child(3) { border-radius: 0 0 0 16px; }
+    .stat-card:not(:last-child)::after { display: none; }
+    .stat-card { padding: 32px 16px; }
+    .stat-number { font-size: clamp(32px, 7vw, 46px); }
+  }
+</style>
+</head>
+<body>
+
+<section class="stats-section">
+  <div class="bg-glow"></div>
+
+  <div class="stats-inner">
+
+    <!-- Stat 1: Monthly Views — 131,551+ -->
+    <div class="stat-card" id="card0">
+      <div class="stat-icon">
+        <svg viewBox="0 0 20 20" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 10s3-6 9-6 9 6 9 6-3 6-9 6-9-6-9-6z"/>
+          <circle cx="10" cy="10" r="2.5"/>
+        </svg>
+      </div>
+      <div class="stat-number">
+        <span class="stat-count" id="count0">0</span>
+        <span class="suffix">+</span>
+      </div>
+      <div class="stat-label">Monthly Views</div>
+      <div class="stat-bar"></div>
+    </div>
+
+    <!-- Stat 2: Courses Completed — 3 -->
+    <div class="stat-card" id="card1">
+      <div class="stat-icon">
+        <svg viewBox="0 0 20 20" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 5l8-3 8 3v7a8 8 0 01-8 5 8 8 0 01-8-5V5z"/>
+          <path d="M7 10l2 2 4-4"/>
+        </svg>
+      </div>
+      <div class="stat-number">
+        <span class="stat-count" id="count1">0</span>
+        <span class="suffix">+</span>
+      </div>
+      <div class="stat-label">Courses Completed</div>
+      <div class="stat-bar"></div>
+    </div>
+
+    <!-- Stat 3: Countries Reached — 10+ -->
+    <div class="stat-card" id="card2">
+      <div class="stat-icon">
+        <svg viewBox="0 0 20 20" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="10" cy="10" r="8"/>
+          <path d="M2 10h16M10 2a14 14 0 010 16M10 2a14 14 0 000 16"/>
+        </svg>
+      </div>
+      <div class="stat-number">
+        <span class="stat-count" id="count2">0</span>
+        <span class="suffix">+</span>
+      </div>
+      <div class="stat-label">Countries Reached</div>
+      <div class="stat-bar"></div>
+    </div>
+
+    <!-- Stat 4: Students Mentored — 300+ -->
+    <div class="stat-card" id="card3">
+      <div class="stat-icon">
+        <svg viewBox="0 0 20 20" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path d="M17 18a7 7 0 10-14 0"/>
+          <path d="M15 11a3 3 0 110 6"/>
+          <path d="M19 18a5 5 0 00-4-4.9"/>
+        </svg>
+      </div>
+      <div class="stat-number">
+        <span class="stat-count" id="count3">0</span>
+        <span class="suffix">+</span>
+      </div>
+      <div class="stat-label">Students Mentored</div>
+      <div class="stat-bar"></div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  const stats = [
+    { id: 0, target: 131551, duration: 2200, decimals: 0, format: true },
+    { id: 1, target: 3,      duration: 800,  decimals: 0, format: false },
+    { id: 2, target: 10,     duration: 1200, decimals: 0, format: false },
+    { id: 3, target: 300,    duration: 1800, decimals: 0, format: false },
+  ];
+
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function formatNum(n) {
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  function animateCount(el, target, duration, decimals, format) {
+    const start = performance.now();
+    function tick(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeOutCubic(progress);
+      const value = Math.floor(eased * target);
+      el.textContent = format ? formatNum(value) : value.toString();
+      if (progress < 1) requestAnimationFrame(tick);
+      else el.textContent = format ? formatNum(target) : target.toString();
+    }
+    requestAnimationFrame(tick);
+  }
+
+  let triggered = false;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !triggered) {
+        triggered = true;
+        stats.forEach(s => {
+          const countEl = document.getElementById('count' + s.id);
+          const card    = document.getElementById('card'  + s.id);
+          setTimeout(() => {
+            card.classList.add('animated');
+            animateCount(countEl, s.target, s.duration, s.decimals, s.format);
+          }, s.id * 150);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  observer.observe(document.querySelector('.stats-section'));
+</script>
+</body>
+</html>

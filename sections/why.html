@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Trade Maven – Why Learn</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #00e5a0;
+    --green-glow: rgba(0,229,160,0.12);
+    --bg: #000000;
+    --card-bg: rgba(255,255,255,0.03);
+    --card-hover: rgba(0,229,160,0.04);
+    --border: rgba(255,255,255,0.07);
+    --green-border: rgba(0,229,160,0.18);
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.6);
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+
+  /* ── SECTION ── */
+  .why-section {
+    position: relative;
+    padding: 80px 5% 88px;
+    overflow: hidden;
+  }
+
+  /* Ambient background glow */
+  .why-section .bg-glow {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 800px; height: 500px;
+    background: radial-gradient(ellipse, rgba(0,229,160,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADING ── */
+  .why-heading {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    margin-bottom: 56px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .why-heading.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .why-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,229,160,0.08);
+    border: 1px solid rgba(0,229,160,0.2);
+    border-radius: 100px;
+    padding: 5px 16px;
+    margin-bottom: 16px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+  .why-eyebrow .dot {
+    width: 5px; height: 5px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .why-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 4.5vw, 58px);
+    line-height: 1.05;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+  .why-title .accent { color: var(--green); }
+
+  .why-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--muted);
+    margin-top: 14px;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+  }
+
+  /* ── CARDS GRID ── */
+  .cards-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .cards-row {
+    display: grid;
+    gap: 20px;
+  }
+  .cards-row.row-top    { grid-template-columns: repeat(3, 1fr); }
+  .cards-row.row-bottom {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 740px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* ── CARD ── */
+  .card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1),
+                border-color 0.3s,
+                background 0.3s;
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  .card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.55s ease, transform 0.55s ease,
+                border-color 0.3s, background 0.3s;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--green-border);
+    background: var(--card-hover);
+  }
+
+  /* Top green shimmer on hover */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 15%; right: 15%;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 0 0 4px 4px;
+  }
+  .card:hover::before { opacity: 1; }
+
+  /* Corner accent glow */
+  .card::after {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 140px; height: 140px;
+    background: radial-gradient(circle, rgba(0,229,160,0.07) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .card:hover::after { opacity: 1; }
+
+  /* ── ICON BOX ── */
+  .card-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: rgba(0,229,160,0.08);
+    border: 1px solid rgba(0,229,160,0.15);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 22px;
+    flex-shrink: 0;
+    transition: background 0.3s, border-color 0.3s, transform 0.3s;
+  }
+  .card:hover .card-icon {
+    background: rgba(0,229,160,0.15);
+    border-color: rgba(0,229,160,0.35);
+    transform: scale(1.08);
+  }
+  .card-icon svg { width: 24px; height: 24px; }
+
+  /* ── TEXT ── */
+  .card-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: #fff;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .card-body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
+  /* ── KEYFRAMES ── */
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,229,160,0.5); }
+    50%       { opacity: 0.7; box-shadow: 0 0 0 4px rgba(0,229,160,0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 860px) {
+    .cards-row.row-top    { grid-template-columns: 1fr 1fr; }
+    .cards-row.row-bottom { grid-template-columns: 1fr 1fr; max-width: 100%; }
+  }
+  @media (max-width: 560px) {
+    .cards-row.row-top,
+    .cards-row.row-bottom { grid-template-columns: 1fr; max-width: 100%; }
+    .card { padding: 28px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="why-section">
+  <div class="bg-glow"></div>
+
+  <!-- Heading -->
+  <div class="why-heading" id="whyHeading">
+    <div class="why-eyebrow"><span class="dot"></span> About the mentor</div>
+    <h2 class="why-title">Why Learn from <span class="accent">Trade Maven?</span></h2>
+    <p class="why-desc">Everything you need to go from confused beginner to confident trader — taught by someone who's done it.</p>
+  </div>
+
+  <!-- Cards -->
+  <div class="cards-wrap">
+
+    <!-- Row 1: 3 cards -->
+    <div class="cards-row row-top">
+
+      <!-- Card 1 -->
+      <div class="card" id="c0">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00e5a0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+            <path d="M7 10l3 3 5-5"/>
+          </svg>
+        </div>
+        <div class="card-title">Proven Market Expertise</div>
+        <p class="card-body">With over 5 years of live trading experience, the mentor brings deep, practical understanding of the stock and options market.</p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card" id="c1">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00e5a0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 17l4-8 4 4 3-6 4 8"/>
+            <circle cx="18" cy="8" r="3"/>
+            <path d="M18 5v1M18 11v1M15 8h1M21 8h1"/>
+          </svg>
+        </div>
+        <div class="card-title">Real-World, Practical Teaching</div>
+        <p class="card-body">No boring theory. Learn through real-time market examples, trade breakdowns, and proven strategies.</p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card" id="c2">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00e5a0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+        </div>
+        <div class="card-title">Trusted by 300+ Students</div>
+        <p class="card-body">From complete beginners to advanced traders — 300+ learners have already benefitted from his guidance.</p>
+      </div>
+
+    </div>
+
+    <!-- Row 2: 2 cards (centred) -->
+    <div class="cards-row row-bottom">
+
+      <!-- Card 4 -->
+      <div class="card" id="c3">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00e5a0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="card-title">Unique &amp; Simplified Concepts</div>
+        <p class="card-body">Master advanced ideas like Smart Money, Price Action, ICT Concepts, and Fundamentals — all explained in an easy, actionable format.</p>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="card" id="c4">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00e5a0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <div class="card-title">Student-First Mentorship</div>
+        <p class="card-body">Follow a step-by-step roadmap, with personal guidance and lifetime learning support.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  // Animate heading + cards when scrolled into view
+  const heading = document.getElementById('whyHeading');
+  const cards   = document.querySelectorAll('.card');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+
+      if (entry.target === heading) {
+        heading.classList.add('visible');
+      } else {
+        const idx = parseInt(entry.target.id.replace('c', ''));
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, idx * 100);
+      }
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.0 });
+
+  observer.observe(heading);
+  cards.forEach(c => observer.observe(c));
+
+  /* Wix iframes load fully in viewport — trigger visible immediately as fallback */
+  setTimeout(() => {
+    heading.classList.add('visible');
+    cards.forEach((card, i) => {
+      setTimeout(() => card.classList.add('visible'), i * 100);
+    });
+  }, 200);
+
+  /* ── Wix iframe height reporter ── */
+  function reportHeight() {
+    const h = document.body.scrollHeight || document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: 'wix-height', height: h }, '*');
+  }
+  window.addEventListener('load', reportHeight);
+  window.addEventListener('resize', reportHeight);
+  setTimeout(reportHeight, 600);
+</script>
+</body>
+</html>

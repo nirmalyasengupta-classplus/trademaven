@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Trade Maven – Testimonials</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --green: #00e5a0;
+    --bg: #000;
+    --text: #fff;
+    --muted: rgba(255,255,255,0.52);
+    --card-bg: rgba(8,18,12,0.97);
+    --border: rgba(0,229,160,0.1);
+  }
+
+  html, body {
+    background:var(--bg); color:var(--text);
+    font-family:'DM Sans',sans-serif; overflow-x:hidden;
+  }
+
+  /* ══════════════════════════
+     SECTION
+  ══════════════════════════ */
+  .testi-section {
+    position:relative; padding:100px 0 110px; overflow:hidden;
+  }
+
+  /* Animated hairlines */
+  .testi-section::before, .testi-section::after {
+    content:''; position:absolute; left:0; right:0; height:1px;
+    background:linear-gradient(90deg, transparent 0%, rgba(0,229,160,0.3) 30%, rgba(0,229,160,0.6) 50%, rgba(0,229,160,0.3) 70%, transparent 100%);
+    animation:hairPulse 4s ease-in-out infinite;
+  }
+  .testi-section::before { top:0; }
+  .testi-section::after  { bottom:0; animation-delay:2s; }
+  @keyframes hairPulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+  /* Background canvas */
+  #t-cv { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+
+  /* Hex grid canvas */
+  #t-hex { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity:.35; }
+
+  /* Ambient glow */
+  .bg-glow {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:1200px; height:800px;
+    background:radial-gradient(ellipse,rgba(0,229,160,0.09) 0%,transparent 65%);
+    pointer-events:none; z-index:0;
+    animation:glowDrift 10s ease-in-out infinite;
+  }
+  @keyframes glowDrift { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-53%) scale(1.06)} }
+
+  /* Side fades */
+  .fade-mask { position:absolute; top:0; bottom:0; width:240px; z-index:10; pointer-events:none; }
+  .fade-mask.left  { left:0;  background:linear-gradient(to right,#000 25%,transparent); }
+  .fade-mask.right { right:0; background:linear-gradient(to left,#000 25%,transparent); }
+
+  /* ══════════════════════════
+     HEADING
+  ══════════════════════════ */
+  .testi-heading {
+    position:relative; z-index:5;
+    text-align:center; padding:0 5%; margin-bottom:60px;
+    opacity:0; transform:translateY(24px);
+    transition:opacity .7s, transform .7s;
+  }
+  .testi-heading.visible { opacity:1; transform:translateY(0); }
+
+  .eyebrow {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(0,229,160,0.07); border:1px solid rgba(0,229,160,0.22);
+    border-radius:100px; padding:6px 18px; margin-bottom:18px;
+    font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--green);
+    position:relative; overflow:hidden;
+  }
+  .eyebrow::after {
+    content:''; position:absolute; top:0; left:-120%; width:60%; height:100%;
+    background:linear-gradient(90deg,transparent,rgba(0,229,160,0.25),transparent);
+    animation:eyeShimmer 3.5s ease 1s infinite;
+  }
+  @keyframes eyeShimmer { 0%{left:-120%} 100%{left:220%} }
+  .eyebrow .dot { width:6px; height:6px; background:var(--green); border-radius:50%; animation:pdot 2s ease-in-out infinite; }
+
+  .section-title {
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(38px,5vw,62px); line-height:1.05; letter-spacing:1px; color:#fff;
+  }
+  .section-title .accent {
+    color:var(--green);
+    text-shadow:0 0 40px rgba(0,229,160,0.4), 0 0 80px rgba(0,229,160,0.15);
+  }
+  .section-desc {
+    font-size:15px; color:var(--muted); margin-top:14px;
+    max-width:500px; margin-left:auto; margin-right:auto; line-height:1.8;
+  }
+
+  /* ══════════════════════════
+     RATING SUMMARY
+  ══════════════════════════ */
+  .rating-summary {
+    display:flex; align-items:center; justify-content:center;
+    gap:36px; flex-wrap:wrap; margin-bottom:56px;
+    position:relative; z-index:5;
+    opacity:0; transform:translateY(16px);
+    transition:opacity .7s .15s, transform .7s .15s;
+  }
+  .rating-summary.visible { opacity:1; transform:translateY(0); }
+
+  .rating-big { display:flex; flex-direction:column; align-items:center; }
+  .rating-num {
+    font-family:'Bebas Neue',sans-serif; font-size:60px; line-height:1;
+    color:#fff; letter-spacing:1px;
+    text-shadow:0 0 30px rgba(255,255,255,0.1);
+  }
+  .rating-stars { display:flex; gap:3px; margin:5px 0; }
+  .star { color:#FFD600; font-size:16px; }
+  .rating-label { font-size:12px; color:var(--muted); letter-spacing:.5px; }
+
+  .rating-sep {
+    width:1px; height:64px;
+    background:linear-gradient(to bottom,transparent,rgba(0,229,160,0.25),transparent);
+  }
+  .rating-stat { text-align:center; }
+  .rating-stat-num {
+    font-family:'Bebas Neue',sans-serif; font-size:34px; color:var(--green);
+    letter-spacing:1px; line-height:1;
+    text-shadow:0 0 20px rgba(0,229,160,0.3);
+  }
+  .rating-stat-label { font-size:12px; color:var(--muted); margin-top:4px; letter-spacing:.3px; }
+
+  /* ══════════════════════════
+     MARQUEE ROWS
+  ══════════════════════════ */
+  .rows-wrap { display:flex; flex-direction:column; gap:20px; position:relative; z-index:2; }
+  .marquee-row { display:flex; gap:20px; width:max-content; will-change:transform; }
+  .row-1 { animation:go-left  36s linear infinite; }
+  .row-2 { animation:go-right 46s linear infinite; }
+  .rows-wrap:hover .marquee-row { animation-play-state:paused !important; }
+
+  /* ══════════════════════════
+     TESTIMONIAL CARD
+  ══════════════════════════ */
+  .tcard {
+    position:relative; width:330px; flex-shrink:0;
+    background:var(--card-bg);
+    border:1px solid var(--border);
+    border-radius:20px; padding:24px 24px 22px;
+    cursor:default;
+    transform-style:preserve-3d; will-change:transform;
+    overflow:visible;
+    box-shadow:inset 0 1px 0 rgba(0,229,160,0.05), 0 2px 6px rgba(0,0,0,0.4);
+    transition:border-color .3s, box-shadow .3s;
+  }
+
+  /* Outer bloom */
+  .tcard-bloom {
+    position:absolute; inset:-18px; border-radius:28px;
+    pointer-events:none; z-index:-1; opacity:0;
+    background:radial-gradient(ellipse at 50% 50%,rgba(0,229,160,0.16) 0%,transparent 65%);
+    transition:opacity .35s; filter:blur(12px);
+  }
+  .tcard:hover .tcard-bloom { opacity:1; }
+
+  /* Shimmer slide on hover */
+  .tcard-shimmer {
+    position:absolute; top:0; left:-100%; width:100%; height:1.5px;
+    background:linear-gradient(90deg,transparent 0%,rgba(0,229,160,0) 20%,rgba(0,229,160,1) 50%,rgba(0,229,160,0) 80%,transparent 100%);
+    z-index:6; pointer-events:none; opacity:0;
+  }
+  .tcard:hover .tcard-shimmer {
+    opacity:1; animation:shimSlide .55s ease forwards;
+  }
+  @keyframes shimSlide { 0%{left:-100%} 100%{left:100%} }
+
+  /* Spotlight */
+  .tcard-spotlight {
+    position:absolute; inset:0; border-radius:20px;
+    pointer-events:none; z-index:1; opacity:0; transition:opacity .25s;
+  }
+  .tcard:hover .tcard-spotlight { opacity:1; }
+
+  /* Corner brackets */
+  .cc { position:absolute; width:12px; height:12px; pointer-events:none; z-index:7; opacity:0; transition:opacity .3s; }
+  .tcard:hover .cc { opacity:1; }
+  .cc.tl { top:9px;  left:9px;  border-top:1.5px solid var(--green); border-left:1.5px solid var(--green); }
+  .cc.tr { top:9px;  right:9px; border-top:1.5px solid var(--green); border-right:1.5px solid var(--green); }
+  .cc.bl { bottom:9px; left:9px;  border-bottom:1.5px solid var(--green); border-left:1.5px solid var(--green); }
+  .cc.br { bottom:9px; right:9px; border-bottom:1.5px solid var(--green); border-right:1.5px solid var(--green); }
+
+  .tcard:hover {
+    border-color:rgba(0,229,160,0.45);
+    box-shadow:
+      0 0 0 1px rgba(0,229,160,0.07),
+      0 24px 60px rgba(0,0,0,0.7),
+      0 0 45px rgba(0,229,160,0.18),
+      0 0 90px rgba(0,229,160,0.08),
+      inset 0 1px 0 rgba(0,229,160,0.1);
+  }
+
+  /* Quote mark */
+  .tcard-quote {
+    font-family:'Bebas Neue',sans-serif; font-size:60px; line-height:.55;
+    color:var(--green); opacity:.3; margin-bottom:12px;
+    position:relative; z-index:2; transition:opacity .25s;
+  }
+  .tcard:hover .tcard-quote { opacity:.65; }
+
+  .tcard-stars { display:flex; gap:3px; margin-bottom:13px; position:relative; z-index:2; }
+  .tcard-stars .star { font-size:13px; }
+
+  .tcard-text {
+    font-size:13px; line-height:1.8; color:rgba(255,255,255,0.72);
+    margin-bottom:20px; position:relative; z-index:2;
+    display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;
+  }
+
+  .tcard-divider {
+    height:1px; margin-bottom:17px; position:relative; z-index:2;
+    background:linear-gradient(90deg,transparent,rgba(0,229,160,0.12),transparent);
+  }
+
+  .tcard-author { display:flex; align-items:center; gap:12px; position:relative; z-index:2; }
+  .tcard-avatar {
+    width:42px; height:42px; border-radius:50%;
+    border:2px solid rgba(0,229,160,0.22);
+    background:linear-gradient(135deg,#0a1a10,#051008);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--green);
+    transition:border-color .25s, box-shadow .25s;
+  }
+  .tcard:hover .tcard-avatar {
+    border-color:rgba(0,229,160,0.6);
+    box-shadow:0 0 12px rgba(0,229,160,0.25);
+  }
+  .tcard-name { font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; color:#fff; }
+  .tcard-course { font-size:11px; color:var(--green); margin-top:2px; font-family:'Rajdhani',sans-serif; font-weight:600; letter-spacing:.3px; }
+
+  .tcard-verified {
+    margin-left:auto;
+    display:flex; align-items:center; gap:4px;
+    background:rgba(0,229,160,0.07); border:1px solid rgba(0,229,160,0.2);
+    border-radius:100px; padding:3px 9px;
+    font-size:10px; font-weight:700; letter-spacing:.5px; text-transform:uppercase;
+    color:var(--green); font-family:'Rajdhani',sans-serif;
+    transition:background .25s, border-color .25s;
+  }
+  .tcard:hover .tcard-verified { background:rgba(0,229,160,0.12); border-color:rgba(0,229,160,0.4); }
+  .tcard-verified svg { width:10px; height:10px; }
+
+  /* ══════════════════════════
+     TRUST BAR
+  ══════════════════════════ */
+  .trust-bar {
+    position:relative; z-index:5;
+    display:flex; align-items:center; justify-content:center;
+    gap:44px; flex-wrap:wrap;
+    margin-top:60px; padding:0 5%;
+    opacity:0; transform:translateY(16px);
+    transition:opacity .7s .2s, transform .7s .2s;
+  }
+  .trust-bar.visible { opacity:1; transform:translateY(0); }
+
+  .trust-item { display:flex; align-items:center; gap:12px; }
+  .trust-icon {
+    width:38px; height:38px; border-radius:11px;
+    background:rgba(0,229,160,0.07); border:1px solid rgba(0,229,160,0.18);
+    display:flex; align-items:center; justify-content:center;
+    transition:background .25s, border-color .25s, box-shadow .25s;
+  }
+  .trust-item:hover .trust-icon {
+    background:rgba(0,229,160,0.14); border-color:rgba(0,229,160,0.4);
+    box-shadow:0 0 16px rgba(0,229,160,0.2);
+  }
+  .trust-icon svg { width:16px; height:16px; }
+  .trust-text { display:flex; flex-direction:column; }
+  .trust-val { font-family:'Rajdhani',sans-serif; font-size:17px; font-weight:700; color:#fff; transition:color .25s; }
+  .trust-item:hover .trust-val { color:var(--green); }
+  .trust-label { font-size:11px; color:var(--muted); }
+  .trust-sep { width:1px; height:38px; background:linear-gradient(to bottom,transparent,rgba(0,229,160,0.18),transparent); }
+
+  /* ══════════════════════════
+     KEYFRAMES
+  ══════════════════════════ */
+  @keyframes go-left  { from{transform:translateX(0)}    to{transform:translateX(-50%)} }
+  @keyframes go-right { from{transform:translateX(-50%)} to{transform:translateX(0)} }
+  @keyframes pdot { 0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,.5)} 50%{box-shadow:0 0 0 5px rgba(0,229,160,0)} }
+
+  @media(max-width:600px){
+    .fade-mask{width:60px;} .tcard{width:275px;} .rating-sep{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<section class="testi-section">
+  <canvas id="t-cv"></canvas>
+  <canvas id="t-hex"></canvas>
+  <div class="bg-glow"></div>
+  <div class="fade-mask left"></div>
+  <div class="fade-mask right"></div>
+
+  <!-- Heading -->
+  <div class="testi-heading" id="testiHeading">
+    <div class="eyebrow"><span class="dot"></span> Real Results</div>
+    <h2 class="section-title">What Our <span class="accent">Students</span> Say</h2>
+    <p class="section-desc">Over 20,000 traders have transformed their approach to the market with Trade Maven. Here's what they have to say.</p>
+  </div>
+
+  <!-- Rating summary -->
+  <div class="rating-summary" id="ratingSummary">
+    <div class="rating-big">
+      <div class="rating-num">4.9</div>
+      <div class="rating-stars">
+        <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+      </div>
+      <div class="rating-label">Average Rating</div>
+    </div>
+    <div class="rating-sep"></div>
+    <div class="rating-stat">
+      <div class="rating-stat-num" data-target="20000" data-suffix="+">0</div>
+      <div class="rating-stat-label">Students Enrolled</div>
+    </div>
+    <div class="rating-sep"></div>
+    <div class="rating-stat">
+      <div class="rating-stat-num" data-target="98" data-suffix="%">0</div>
+      <div class="rating-stat-label">Satisfaction Rate</div>
+    </div>
+    <div class="rating-sep"></div>
+    <div class="rating-stat">
+      <div class="rating-stat-num" data-target="10" data-suffix="+">0</div>
+      <div class="rating-stat-label">Countries Reached</div>
+    </div>
+  </div>
+
+  <!-- Marquee rows -->
+  <div class="rows-wrap">
+    <div class="marquee-row row-1" id="row1"></div>
+    <div class="marquee-row row-2" id="row2"></div>
+  </div>
+
+  <!-- Trust bar -->
+  <div class="trust-bar" id="trustBar">
+    <div class="trust-item">
+      <div class="trust-icon">
+        <svg viewBox="0 0 16 16" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 1l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4z"/>
+        </svg>
+      </div>
+      <div class="trust-text">
+        <span class="trust-val">4.9 / 5.0</span>
+        <span class="trust-label">Course Rating</span>
+      </div>
+    </div>
+    <div class="trust-sep"></div>
+    <div class="trust-item">
+      <div class="trust-icon">
+        <svg viewBox="0 0 16 16" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 14s-6-4-6-8a6 6 0 0112 0c0 4-6 8-6 8z"/>
+          <circle cx="8" cy="6" r="2"/>
+        </svg>
+      </div>
+      <div class="trust-text">
+        <span class="trust-val">20,000+</span>
+        <span class="trust-label">Active Students</span>
+      </div>
+    </div>
+    <div class="trust-sep"></div>
+    <div class="trust-item">
+      <div class="trust-icon">
+        <svg viewBox="0 0 16 16" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 8l4 4 8-8"/>
+        </svg>
+      </div>
+      <div class="trust-text">
+        <span class="trust-val">Verified Reviews</span>
+        <span class="trust-label">Real Students Only</span>
+      </div>
+    </div>
+    <div class="trust-sep"></div>
+    <div class="trust-item">
+      <div class="trust-icon">
+        <svg viewBox="0 0 16 16" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="8" cy="8" r="6"/>
+          <path d="M8 5v4l2.5 2"/>
+        </svg>
+      </div>
+      <div class="trust-text">
+        <span class="trust-val">Lifetime Access</span>
+        <span class="trust-label">Learn at Your Own Pace</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ══════════════════════════
+   1. PARTICLE + METEOR BG
+══════════════════════════ */
+(function(){
+  const cv  = document.getElementById('t-cv');
+  const ctx = cv.getContext('2d');
+  const sec = document.querySelector('.testi-section');
+  let W, H, pts=[], meteors=[], t=0;
+
+  function resize(){
+    W=cv.width=sec.offsetWidth; H=cv.height=sec.offsetHeight;
+    pts=[];
+    const n=Math.floor(W*H/11000);
+    for(let i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.15,r:Math.random()*1.6+.4,a:Math.random()*.35+.08,ph:Math.random()*Math.PI*2});
+  }
+  window.addEventListener('resize',resize); resize();
+
+  function spawnMeteor(){
+    meteors.push({x:Math.random()*W*1.2-W*.1,y:-20,spd:Math.random()*3.5+2.5,len:Math.random()*100+50,a:Math.random()*.5+.25,life:0,max:50+Math.random()*35});
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    if(Math.random()<.007) spawnMeteor();
+    for(let i=meteors.length-1;i>=0;i--){
+      const m=meteors[i]; m.x+=m.spd*.55; m.y+=m.spd; m.life++;
+      if(m.life>m.max){meteors.splice(i,1);continue;}
+      const a=m.a*(1-m.life/m.max);
+      const g=ctx.createLinearGradient(m.x-m.len*.5,m.y-m.len,m.x,m.y);
+      g.addColorStop(0,'rgba(0,229,160,0)'); g.addColorStop(1,`rgba(0,229,160,${a})`);
+      ctx.beginPath(); ctx.moveTo(m.x-m.len*.5,m.y-m.len); ctx.lineTo(m.x,m.y);
+      ctx.strokeStyle=g; ctx.lineWidth=1.4; ctx.stroke();
+    }
+    const DIST=115;
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.ph+=.016;if(p.x<-10)p.x=W+10;if(p.x>W+10)p.x=-10;if(p.y<-10)p.y=H+10;if(p.y>H+10)p.y=-10;});
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<DIST){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(0,229,160,${(1-d/DIST)*.09})`;ctx.lineWidth=.6;ctx.stroke();}
+      }
+    }
+    pts.forEach(p=>{
+      const pulse=.7+.3*Math.sin(p.ph);
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r*pulse,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,229,160,${p.a*pulse})`;
+      ctx.shadowBlur=9;ctx.shadowColor='rgba(0,229,160,.6)';
+      ctx.fill();ctx.shadowBlur=0;
+    });
+    t++;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════
+   2. HEX GRID
+══════════════════════════ */
+(function(){
+  const cv=document.getElementById('t-hex'),ctx=cv.getContext('2d');
+  const sec=document.querySelector('.testi-section');
+  let W,H,p=0;
+  function resize(){W=cv.width=sec.offsetWidth;H=cv.height=sec.offsetHeight;}
+  window.addEventListener('resize',resize);resize();
+  function hexPath(cx,cy,sz){
+    ctx.beginPath();
+    for(let i=0;i<6;i++){const a=Math.PI/3*i-Math.PI/6;i?ctx.lineTo(cx+sz*Math.cos(a),cy+sz*Math.sin(a)):ctx.moveTo(cx+sz*Math.cos(a),cy+sz*Math.sin(a));}
+    ctx.closePath();
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H); p+=.007;
+    const sz=36,r3=sz*Math.sqrt(3);
+    const cols=Math.ceil(W/r3)+2,rows=Math.ceil(H/(sz*1.5))+2;
+    for(let row=-1;row<rows;row++){
+      for(let col=-1;col<cols;col++){
+        const x=col*r3+(row%2)*r3/2,y=row*sz*1.5;
+        const dist=Math.sqrt((x-W/2)**2+(y-H/2)**2)/Math.sqrt(W**2+H**2)*2;
+        const a=0.016*(1-dist)*(.5+.5*Math.sin(p+dist*8));
+        if(a<.002) continue;
+        hexPath(x,y,sz-2);
+        ctx.strokeStyle=`rgba(0,229,160,${a})`;ctx.lineWidth=.55;ctx.stroke();
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════
+   3. TESTIMONIAL DATA
+══════════════════════════ */
+const reviews = [
+  { name:'Aryan Mehta',    initials:'AM', course:'2025 Maven Mentorship',    stars:5, text:'Trade Maven literally changed how I see charts. Before this course I was randomly guessing entries. Now I have a proper system and my win rate improved drastically in just 2 months. Best investment I made.' },
+  { name:'Priya Sharma',   initials:'PS', course:'2026 Live Batch',          stars:5, text:'The way SMC and ICT concepts are explained is so simple yet so powerful. I was completely new to trading and now I\'m placing confident trades. The live sessions are incredible.' },
+  { name:'Rohit Verma',    initials:'RV', course:'2025 Maven Mentorship',    stars:5, text:'The Maven Concept alone is worth 10x the course price. I\'ve been trading for 3 years and never had this level of clarity. Trade Maven explains things in a way no one else does.' },
+  { name:'Sneha Patel',    initials:'SP', course:'Bundle Course',            stars:5, text:'The bundle was the best decision I made. Both courses together gave me a complete picture from price action basics all the way to advanced ICT and CRT concepts. Highly recommend.' },
+  { name:'Karan Singh',    initials:'KS', course:'2025 Maven Mentorship',    stars:5, text:'I was skeptical at first but the free YouTube content convinced me. The paid course is 100x more detailed. Risk management alone saved my account multiple times.' },
+  { name:'Anjali Nair',    initials:'AN', course:'2026 Live Batch',          stars:5, text:'Perfect for beginners. No jargon, no confusion. Clear step-by-step lessons in Hindi and English that actually work in real market conditions. Love the live doubt classes.' },
+  { name:'Vikram Joshi',   initials:'VJ', course:'2025 Maven Mentorship',    stars:5, text:'The SMC + ICT hybrid approach blew my mind. I\'ve taken multiple other courses and this is by far the most practical and actionable one. Real results from day one.' },
+  { name:'Meera Iyer',     initials:'MI', course:'Bundle Course',            stars:5, text:'Worth every rupee and more. Trade Maven has a gift for teaching — he simplifies what seems complex into easy-to-apply rules. The CRT concept changed my entries completely.' },
+  { name:'Aditya Kumar',   initials:'AK', course:'2025 Maven Mentorship',    stars:5, text:'I followed Trade Maven on YouTube for months before joining. The course exceeded all my expectations. The Order Blocks and FVG patterns are now core to my daily analysis.' },
+  { name:'Divya Reddy',    initials:'DR', course:'2026 Live Batch',          stars:5, text:'Started this course with zero knowledge. 3 months later I\'m placing trades with confidence on Gold and Nifty. The progression from basics to advanced is very well structured.' },
+  { name:'Suresh Nambiar', initials:'SN', course:'2025 Maven Mentorship',    stars:5, text:'The liquidity sweep concept is a game changer. Once you understand how smart money hunts stops your entries become incredibly precise. This course pays for itself many times over.' },
+  { name:'Pooja Gupta',    initials:'PG', course:'Bundle Course',            stars:5, text:'The community alone is worth the price. Everyone is helpful and supportive. Trade Maven personally reviews concepts in the live sessions which is absolutely invaluable.' },
+];
+
+/* ══════════════════════════
+   4. BUILD CARD
+══════════════════════════ */
+function makeCard(r){
+  const card=document.createElement('div');
+  card.className='tcard';
+  const stars=Array(r.stars).fill('<span class="star">★</span>').join('');
+  card.innerHTML=`
+    <div class="tcard-bloom"></div>
+    <div class="tcard-shimmer"></div>
+    <div class="tcard-spotlight"></div>
+    <div class="cc tl"></div><div class="cc tr"></div>
+    <div class="cc bl"></div><div class="cc br"></div>
+    <div class="tcard-quote">"</div>
+    <div class="tcard-stars">${stars}</div>
+    <p class="tcard-text">${r.text}</p>
+    <div class="tcard-divider"></div>
+    <div class="tcard-author">
+      <div class="tcard-avatar">${r.initials}</div>
+      <div>
+        <div class="tcard-name">${r.name}</div>
+        <div class="tcard-course">${r.course}</div>
+      </div>
+      <div class="tcard-verified">
+        <svg viewBox="0 0 10 10" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5l2 2 4-4"/></svg>
+        Verified
+      </div>
+    </div>
+  `;
+
+  const spot=card.querySelector('.tcard-spotlight');
+  const bloom=card.querySelector('.tcard-bloom');
+
+  card.addEventListener('mouseenter',()=>{ card.style.transition='transform 0.08s linear, border-color .08s, box-shadow .08s'; });
+  card.addEventListener('mousemove',e=>{
+    const rec=card.getBoundingClientRect();
+    const mx=e.clientX-rec.left,my=e.clientY-rec.top;
+    const rx=-((my-rec.height/2)/(rec.height/2))*12;
+    const ry= ((mx-rec.width/2) /(rec.width/2)) *12;
+    card.style.transform=`perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.032,1.032,1.032) translateZ(8px)`;
+    spot.style.background=`radial-gradient(380px circle at ${(mx/rec.width)*100}% ${(my/rec.height)*100}%, rgba(0,229,160,0.16), transparent 58%)`;
+    bloom.style.background=`radial-gradient(ellipse at ${50-ry*2}% ${50+rx*2}%, rgba(0,229,160,0.18) 0%, transparent 65%)`;
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transition='transform .55s cubic-bezier(.4,0,.2,1), border-color .3s, box-shadow .3s';
+    card.style.transform=''; spot.style.background=''; bloom.style.background='';
+  });
+  return card;
+}
+
+function fillRow(rowEl,subset){
+  [...subset,...subset].forEach(r=>rowEl.appendChild(makeCard(r)));
+}
+fillRow(document.getElementById('row1'),reviews.slice(0,7));
+fillRow(document.getElementById('row2'),reviews.slice(5,12));
+
+/* ══════════════════════════
+   5. SCROLL REVEAL + COUNT-UP
+══════════════════════════ */
+function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
+
+function countUp(el, target, duration){
+  const start=performance.now();
+  const suffix=el.dataset.suffix||'';
+  const fmt=n=>n>=1000?n.toLocaleString('en-IN'):n.toString();
+  function tick(now){
+    const t=Math.min((now-start)/duration,1);
+    el.textContent=fmt(Math.floor(easeOutCubic(t)*target))+suffix;
+    if(t<1) requestAnimationFrame(tick);
+    else el.textContent=fmt(target)+suffix;
+  }
+  requestAnimationFrame(tick);
+}
+
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    e.target.classList.add('visible');
+    /* Trigger count-up for rating stats */
+    if(e.target.id==='ratingSummary'){
+      e.target.querySelectorAll('[data-target]').forEach((el,i)=>{
+        setTimeout(()=>countUp(el,parseInt(el.dataset.target),1800),i*150);
+      });
+    }
+    obs.unobserve(e.target);
+  });
+},{ threshold:0.12 });
+
+['testiHeading','ratingSummary','trustBar'].forEach(id=>obs.observe(document.getElementById(id)));
+</script>
+</body>
+</html>

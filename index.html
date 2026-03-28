@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade Maven</title>
+
+<!-- GOOGLE FONTS (IMPORTANT) -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: 'DM Sans', sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- MAIN FLOW -->
+  <div id="hero"></div>
+  <div id="courses"></div>
+  <div id="stats"></div>
+  <div id="why"></div>
+  <div id="method"></div>
+  <div id="testimonials"></div>
+
+  <!-- VIDEO SECTIONS -->
+  <div id="videos"></div>
+  <div id="videos2"></div>
+
+  <!-- FOOTER -->
+  <div id="footer"></div>
+
+  <script>
+    const load = (id, file) => {
+      fetch(file)
+        .then(res => res.text())
+        .then(data => document.getElementById(id).innerHTML = data)
+        .catch(err => console.error("Error loading:", file, err));
+    };
+
+    load("hero", "./sections/hero.html");
+    load("courses", "./sections/courses.html");
+    load("stats", "./sections/stats.html");
+    load("why", "./sections/why.html");
+    load("method", "./sections/method.html");
+    load("testimonials", "./sections/testimonials.html");
+
+    load("videos", "./sections/videos.html");
+    load("videos2", "./sections/videosi.html");
+
+    load("footer", "./sections/footer.html");
+  </script>
+
+  <!-- NAV SYSTEM -->
+  <script src="nav.js"></script>
+
+</body>
+</html>

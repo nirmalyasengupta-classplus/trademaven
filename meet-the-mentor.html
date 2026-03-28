@@ -1,0 +1,435 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Trade Maven â€“ About the Mentor</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --g: #00e5a0; --bg: #000; --text: #fff;
+  --muted: rgba(255,255,255,0.55);
+  --gb: rgba(0,229,160,0.18);
+}
+html, body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SECTION
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.about-section {
+  position:relative; padding:110px 5% 120px; overflow:hidden;
+}
+.about-section::before, .about-section::after {
+  content:''; position:absolute; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent 0%, rgba(0,229,160,0.3) 30%, rgba(0,229,160,0.6) 50%, rgba(0,229,160,0.3) 70%, transparent 100%);
+  animation:hairPulse 4s ease-in-out infinite;
+}
+.about-section::before { top:0; }
+.about-section::after  { bottom:0; animation-delay:2s; }
+@keyframes hairPulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+#ab-cv  { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+#ab-hex { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity:.3; }
+
+.bg-glow {
+  position:absolute; top:40%; left:55%;
+  transform:translate(-50%,-50%);
+  width:900px; height:700px;
+  background:radial-gradient(ellipse, rgba(0,229,160,0.1) 0%, transparent 65%);
+  pointer-events:none; z-index:0;
+  animation:glowDrift 10s ease-in-out infinite;
+}
+@keyframes glowDrift { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-53%) scale(1.07)} }
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   LAYOUT
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.about-inner {
+  position:relative; z-index:2;
+  max-width:1140px; margin:0 auto;
+  display:grid; grid-template-columns:1fr 1.1fr;
+  gap:80px; align-items:center;
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   LEFT â€” IMAGE SIDE
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.about-left {
+  position:relative;
+  opacity:0; transform:translateX(-32px);
+  transition:opacity .8s ease, transform .8s ease;
+}
+.about-left.in { opacity:1; transform:translateX(0); }
+
+/* Outer frame */
+.img-frame {
+  position:relative; border-radius:24px; overflow:hidden;
+  border:1px solid rgba(0,229,160,0.2);
+  box-shadow:0 0 0 1px rgba(0,229,160,0.06), 0 40px 100px rgba(0,0,0,0.7), 0 0 60px rgba(0,229,160,0.12);
+}
+
+/* Scan line on image */
+.img-scan {
+  position:absolute; left:0; right:0; height:1.5px;
+  background:linear-gradient(90deg, transparent, rgba(0,229,160,0.7), transparent);
+  z-index:5; pointer-events:none;
+  animation:imgScan 6s ease-in-out infinite;
+  box-shadow:0 0 10px rgba(0,229,160,0.5);
+}
+@keyframes imgScan {
+  0%  { top:0%;   opacity:0; }
+  5%  { opacity:.8; }
+  90% { opacity:.8; }
+  100%{ top:100%; opacity:0; }
+}
+
+/* Corner brackets on image */
+.img-corner { position:absolute; width:18px; height:18px; z-index:6; }
+.img-corner.tl { top:12px;  left:12px;  border-top:2px solid var(--g); border-left:2px solid var(--g); }
+.img-corner.tr { top:12px;  right:12px; border-top:2px solid var(--g); border-right:2px solid var(--g); }
+.img-corner.bl { bottom:12px; left:12px;  border-bottom:2px solid var(--g); border-left:2px solid var(--g); }
+.img-corner.br { bottom:12px; right:12px; border-bottom:2px solid var(--g); border-right:2px solid var(--g); }
+
+.mentor-img {
+  width:100%; display:block;
+  filter:brightness(0.9) contrast(1.05);
+  transition:transform .6s cubic-bezier(.22,1,.36,1), filter .4s;
+}
+.img-frame:hover .mentor-img {
+  transform:scale(1.03);
+  filter:brightness(1) contrast(1.08);
+}
+
+/* Bottom fade on image */
+.img-fade {
+  position:absolute; bottom:0; left:0; right:0; height:40%;
+  background:linear-gradient(to bottom, transparent, rgba(0,0,0,0.6));
+  pointer-events:none; z-index:3;
+}
+
+/* Floating stat badges */
+.stat-badge {
+  position:absolute; z-index:10;
+  display:flex; align-items:center; gap:10px;
+  padding:12px 16px;
+  background:rgba(4,12,8,0.96);
+  border:1px solid rgba(0,229,160,0.3);
+  border-radius:14px; backdrop-filter:blur(20px);
+  box-shadow:0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(0,229,160,0.08);
+}
+.stat-badge .sb-icon { font-size:20px; flex-shrink:0; }
+.stat-badge .sb-info { display:flex; flex-direction:column; gap:1px; }
+.stat-badge .sb-val { font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--g); letter-spacing:1px; line-height:1; }
+.stat-badge .sb-lbl { font-family:'Rajdhani',sans-serif; font-size:10px; color:var(--muted); letter-spacing:.5px; text-transform:uppercase; }
+
+#sb1 { bottom:-20px; left:-20px; animation:float1 5s ease-in-out infinite; }
+#sb2 { top:40px; right:-24px; animation:float2 6s ease-in-out infinite .8s; }
+@keyframes float1 { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-8px) rotate(1deg)} }
+@keyframes float2 { 0%,100%{transform:translateY(0) rotate(1deg)} 50%{transform:translateY(-10px) rotate(-1deg)} }
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   RIGHT â€” TEXT SIDE
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.about-right {
+  opacity:0; transform:translateX(32px);
+  transition:opacity .8s .15s ease, transform .8s .15s ease;
+}
+.about-right.in { opacity:1; transform:translateX(0); }
+
+.eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(0,229,160,0.07); border:1px solid rgba(0,229,160,0.22);
+  border-radius:100px; padding:6px 18px; margin-bottom:20px;
+  font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--g);
+  position:relative; overflow:hidden;
+}
+.eyebrow::after {
+  content:''; position:absolute; top:0; left:-120%; width:60%; height:100%;
+  background:linear-gradient(90deg, transparent, rgba(0,229,160,0.25), transparent);
+  animation:eyeShimmer 4s ease 1s infinite;
+}
+@keyframes eyeShimmer { 0%{left:-120%} 100%{left:220%} }
+.eyebrow .dot { width:5px; height:5px; background:var(--g); border-radius:50%; animation:pdot 2s ease-in-out infinite; }
+
+.about-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(40px,5vw,66px); line-height:1.02; letter-spacing:1px; color:#fff;
+  margin-bottom:6px;
+}
+.about-title .accent {
+  color:var(--g);
+  text-shadow:0 0 40px rgba(0,229,160,0.4), 0 0 80px rgba(0,229,160,0.15);
+}
+.about-subtitle {
+  font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:600;
+  color:rgba(0,229,160,0.7); letter-spacing:1px; margin-bottom:28px;
+}
+
+/* Divider line */
+.title-line {
+  width:60px; height:2px; margin-bottom:28px;
+  background:linear-gradient(to right, var(--g), transparent);
+  border-radius:2px;
+}
+
+.about-bio {
+  font-size:15px; line-height:1.85; color:var(--muted);
+  margin-bottom:36px; max-width:560px;
+}
+.about-bio strong { color:#fff; font-weight:600; }
+.about-bio .highlight {
+  color:var(--g); font-weight:600;
+  text-shadow:0 0 16px rgba(0,229,160,0.35);
+}
+
+/* Credentials row */
+.credentials {
+  display:flex; flex-direction:column; gap:12px; margin-bottom:36px;
+}
+.cred-item {
+  display:flex; align-items:center; gap:14px;
+  padding:13px 18px; border-radius:12px;
+  background:rgba(0,229,160,0.04); border:1px solid rgba(0,229,160,0.1);
+  transition:border-color .3s, background .3s, transform .3s;
+}
+.cred-item:hover {
+  border-color:rgba(0,229,160,0.3); background:rgba(0,229,160,0.07);
+  transform:translateX(4px);
+}
+.cred-icon {
+  width:36px; height:36px; border-radius:10px; flex-shrink:0;
+  background:rgba(0,229,160,0.1); border:1px solid rgba(0,229,160,0.2);
+  display:flex; align-items:center; justify-content:center;
+}
+.cred-icon svg { width:16px; height:16px; }
+.cred-text { display:flex; flex-direction:column; gap:2px; }
+.cred-title { font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; color:#fff; }
+.cred-sub { font-size:12px; color:var(--muted); }
+
+/* CTA buttons */
+.about-ctas { display:flex; gap:14px; flex-wrap:wrap; }
+.btn-p {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--g); color:#000; border:none;
+  padding:13px 28px; border-radius:8px;
+  font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; letter-spacing:.5px;
+  text-decoration:none; cursor:pointer;
+  transition:all .25s; position:relative; overflow:hidden;
+}
+.btn-p::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,.2),transparent); opacity:0; transition:opacity .2s; }
+.btn-p:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,229,160,0.45); background:#00ffb3; }
+.btn-p:hover::before { opacity:1; }
+.btn-s {
+  display:inline-flex; align-items:center; gap:8px;
+  background:transparent; color:#fff;
+  border:1px solid rgba(255,255,255,0.18); padding:13px 28px; border-radius:8px;
+  font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:600; letter-spacing:.5px;
+  text-decoration:none; transition:all .25s;
+}
+.btn-s:hover { border-color:var(--g); color:var(--g); transform:translateY(-2px); }
+.btn-p svg, .btn-s svg { width:14px; height:14px; transition:transform .2s; }
+.btn-p:hover svg, .btn-s:hover svg { transform:translateX(3px); }
+
+@keyframes pdot { 0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,.5)} 50%{box-shadow:0 0 0 4px rgba(0,229,160,0)} }
+
+@media(max-width:900px){
+  .about-inner{grid-template-columns:1fr;gap:60px;}
+  .about-left{ max-width:480px; margin:0 auto; }
+  #sb1{bottom:-16px;left:-10px;} #sb2{top:30px;right:-10px;}
+}
+@media(max-width:560px){
+  .about-ctas{flex-direction:column;}
+  .btn-p,.btn-s{justify-content:center;}
+  #sb2{display:none;}
+}
+</style>
+</head>
+<body>
+
+<section class="about-section">
+  <canvas id="ab-cv"></canvas>
+  <canvas id="ab-hex"></canvas>
+  <div class="bg-glow"></div>
+
+  <div class="about-inner">
+
+    <!-- â•â•â• LEFT: IMAGE â•â•â• -->
+    <div class="about-left" id="aboutLeft">
+      <div class="img-frame">
+        <div class="img-scan"></div>
+        <div class="img-corner tl"></div>
+        <div class="img-corner tr"></div>
+        <div class="img-corner bl"></div>
+        <div class="img-corner br"></div>
+        <img class="mentor-img"
+             src="https://static.wixstatic.com/media/3a3b60_9b3cb652ae4b4e1d90310e2b35f39e08~mv2.png"
+             alt="Yuvraj Prajapat â€” Trade Maven"/>
+        <div class="img-fade"></div>
+      </div>
+
+      <!-- Floating badges -->
+      <div class="stat-badge" id="sb1">
+        <span class="sb-icon">ðŸŽ“</span>
+        <div class="sb-info">
+          <span class="sb-val">300+</span>
+          <span class="sb-lbl">Students Mentored</span>
+        </div>
+      </div>
+      <div class="stat-badge" id="sb2">
+        <span class="sb-icon">ðŸ“…</span>
+        <div class="sb-info">
+          <span class="sb-val">5+ YRS</span>
+          <span class="sb-lbl">Live Market Experience</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- â•â•â• RIGHT: TEXT â•â•â• -->
+    <div class="about-right" id="aboutRight">
+      <div class="eyebrow"><span class="dot"></span>About the Mentor</div>
+
+      <h2 class="about-title">
+        Yuvraj<br><span class="accent">Prajapat</span>
+      </h2>
+      <div class="about-subtitle">Maven Bhai Â· Trading Mentor Â· Concept Creator</div>
+      <div class="title-line"></div>
+
+      <p class="about-bio">
+        I'm not just a trader â€” I'm someone who <strong>decoded the market</strong> so you don't have to spend years figuring it out alone. Since <span class="highlight">2019</span>, I've been trading live markets every single day â€” Nifty, BankNifty, Gold (XAUUSD), and Crypto â€” building a methodology that actually works for <strong>Indian retail traders</strong>.
+        <br><br>
+        What I teach isn't borrowed from textbooks. Every concept â€” SMC, ICT, CRT, the <span class="highlight">Maven Concept</span> â€” was refined through real trades, real losses, and real wins. My mission is simple: make trading <strong>practical, structured, and repeatable</strong> for anyone willing to put in the work.
+      </p>
+
+      <div class="credentials">
+        <div class="cred-item">
+          <div class="cred-icon">
+            <svg viewBox="0 0 16 16" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 1l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4z"/>
+            </svg>
+          </div>
+          <div class="cred-text">
+            <span class="cred-title">5+ Years of Live Market Experience</span>
+            <span class="cred-sub">Trading since 2019 Â· Nifty, Gold, Crypto, Forex</span>
+          </div>
+        </div>
+        <div class="cred-item">
+          <div class="cred-icon">
+            <svg viewBox="0 0 16 16" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 5l6-3 6 3v6a6 6 0 01-6 4 6 6 0 01-6-4V5z"/>
+              <path d="M6 8l2 2 4-4"/>
+            </svg>
+          </div>
+          <div class="cred-text">
+            <span class="cred-title">Creator of the Maven Concept</span>
+            <span class="cred-sub">Proprietary SMC + ICT hybrid framework taught to 20,000+ students</span>
+          </div>
+        </div>
+        <div class="cred-item">
+          <div class="cred-icon">
+            <svg viewBox="0 0 16 16" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="8" cy="8" r="6"/>
+              <path d="M2 8h12M8 2a10 10 0 010 12M8 2a10 10 0 000 12"/>
+            </svg>
+          </div>
+          <div class="cred-text">
+            <span class="cred-title">131,000+ Monthly Views on YouTube</span>
+            <span class="cred-sub">Free market analysis every week Â· Hindi & English</span>
+          </div>
+        </div>
+        <div class="cred-item">
+          <div class="cred-icon">
+            <svg viewBox="0 0 16 16" fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 6a5 5 0 11-10 0 5 5 0 0110 0z"/>
+              <path d="M8 11v4M5 15h6"/>
+            </svg>
+          </div>
+          <div class="cred-text">
+            <span class="cred-title">Teaches Price Action, SMC, ICT & CRT</span>
+            <span class="cred-sub">Structured, simplified methods â€” zero unnecessary complexity</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-ctas">
+        <a href="https://www.itrademaven.com/courses" target="_blank" class="btn-p">
+          Explore Courses
+          <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5h9M8 3.5l4 4-4 4"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@itrademaven" target="_blank" class="btn-s">
+          Watch on YouTube
+          <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5h9M8 3.5l4 4-4 4"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+/* â•â• PARTICLE BG â•â• */
+(function(){
+  const cv=document.getElementById('ab-cv'),ctx=cv.getContext('2d');
+  const sec=document.querySelector('.about-section');
+  let W,H,pts=[],meteors=[],t=0;
+  function resize(){W=cv.width=sec.offsetWidth;H=cv.height=sec.offsetHeight;pts=[];const n=Math.floor(W*H/12000);for(let i=0;i<n;i++)pts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.14,r:Math.random()*1.5+.4,a:Math.random()*.3+.08,ph:Math.random()*Math.PI*2});}
+  window.addEventListener('resize',resize);resize();
+  function spawnMeteor(){meteors.push({x:Math.random()*W*1.2-W*.1,y:-20,spd:Math.random()*3+2,len:Math.random()*90+40,a:Math.random()*.4+.2,life:0,max:45+Math.random()*30});}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    if(Math.random()<.006)spawnMeteor();
+    for(let i=meteors.length-1;i>=0;i--){const m=meteors[i];m.x+=m.spd*.5;m.y+=m.spd;m.life++;if(m.life>m.max){meteors.splice(i,1);continue;}const a=m.a*(1-m.life/m.max);const g=ctx.createLinearGradient(m.x-m.len*.5,m.y-m.len,m.x,m.y);g.addColorStop(0,'rgba(0,229,160,0)');g.addColorStop(1,`rgba(0,229,160,${a})`);ctx.beginPath();ctx.moveTo(m.x-m.len*.5,m.y-m.len);ctx.lineTo(m.x,m.y);ctx.strokeStyle=g;ctx.lineWidth=1.3;ctx.stroke();}
+    const DIST=110;
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.ph+=.016;if(p.x<-10)p.x=W+10;if(p.x>W+10)p.x=-10;if(p.y<-10)p.y=H+10;if(p.y>H+10)p.y=-10;});
+    for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<DIST){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(0,229,160,${(1-d/DIST)*.09})`;ctx.lineWidth=.6;ctx.stroke();}}}
+    pts.forEach(p=>{const pulse=.7+.3*Math.sin(p.ph);ctx.beginPath();ctx.arc(p.x,p.y,p.r*pulse,0,Math.PI*2);ctx.fillStyle=`rgba(0,229,160,${p.a*pulse})`;ctx.shadowBlur=8;ctx.shadowColor='rgba(0,229,160,.6)';ctx.fill();ctx.shadowBlur=0;});
+    t++;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* â•â• HEX GRID â•â• */
+(function(){
+  const cv=document.getElementById('ab-hex'),ctx=cv.getContext('2d');
+  const sec=document.querySelector('.about-section');
+  let W,H,p=0;
+  function resize(){W=cv.width=sec.offsetWidth;H=cv.height=sec.offsetHeight;}
+  window.addEventListener('resize',resize);resize();
+  function hex(cx,cy,sz){ctx.beginPath();for(let i=0;i<6;i++){const a=Math.PI/3*i-Math.PI/6;i?ctx.lineTo(cx+sz*Math.cos(a),cy+sz*Math.sin(a)):ctx.moveTo(cx+sz*Math.cos(a),cy+sz*Math.sin(a));}ctx.closePath();}
+  function draw(){
+    ctx.clearRect(0,0,W,H);p+=.007;
+    const sz=34,r3=sz*Math.sqrt(3);
+    const cols=Math.ceil(W/r3)+2,rows=Math.ceil(H/(sz*1.5))+2;
+    for(let row=-1;row<rows;row++){for(let col=-1;col<cols;col++){
+      const x=col*r3+(row%2)*r3/2,y=row*sz*1.5;
+      const dist=Math.sqrt((x-W/2)**2+(y-H/2)**2)/Math.sqrt(W**2+H**2)*2;
+      const a=0.014*(1-dist)*(.5+.5*Math.sin(p+dist*8));
+      if(a<.002)continue;
+      hex(x,y,sz-2);ctx.strokeStyle=`rgba(0,229,160,${a})`;ctx.lineWidth=.5;ctx.stroke();
+    }}
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* â•â• SCROLL REVEAL â•â• */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    e.target.classList.add('in');
+    obs.unobserve(e.target);
+  });
+},{threshold:0.1});
+obs.observe(document.getElementById('aboutLeft'));
+obs.observe(document.getElementById('aboutRight'));
+
+/* â•â• HEIGHT REPORTER â•â• */
+function reportHeight(){const h=document.querySelector('.about-section')?.scrollHeight||window.innerHeight;window.parent.postMessage({type:'wix-height',height:h},'*');}
+window.addEventListener('load',reportHeight);window.addEventListener('resize',reportHeight);setTimeout(reportHeight,300);
+</script>
+
+<script src="nav.js"></script>
+
+</body>
+</html>

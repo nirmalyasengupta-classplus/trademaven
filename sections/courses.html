@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Trade Maven – Courses</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --g: #00e5a0;
+  --bg: #000;
+  --border: rgba(255,255,255,0.07);
+  --gb: rgba(0,229,160,0.2);
+  --text: #fff;
+  --muted: rgba(255,255,255,0.52);
+}
+
+html, body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  overflow-x:hidden;
+  /* No overflow:hidden on body — content must be able to grow */
+}
+
+/* ── SECTION ── */
+.section {
+  position:relative;
+  padding:88px 5%;
+}
+.section::before, .section::after {
+  content:''; position:absolute; left:5%; right:5%; height:1px;
+  background:linear-gradient(90deg,transparent,var(--gb),transparent);
+}
+.section::before { top:0; }
+.section::after  { bottom:0; }
+
+.bg-glow {
+  position:absolute; top:-120px; left:50%;
+  transform:translateX(-50%);
+  width:1000px; height:600px;
+  background:radial-gradient(ellipse,rgba(0,229,160,0.08) 0%,transparent 65%);
+  pointer-events:none; z-index:0;
+}
+
+/* ── HEADING ── */
+.heading {
+  position:relative; z-index:1;
+  text-align:center; margin-bottom:64px;
+  opacity:0; transform:translateY(20px);
+  transition:opacity .6s,transform .6s;
+}
+.heading.visible { opacity:1; transform:translateY(0); }
+
+.eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(0,229,160,0.08); border:1px solid rgba(0,229,160,0.2);
+  border-radius:100px; padding:5px 16px; margin-bottom:16px;
+  font-size:11px; font-weight:600; letter-spacing:1.8px; text-transform:uppercase; color:var(--g);
+}
+.eyebrow .dot { width:5px; height:5px; background:var(--g); border-radius:50%; animation:pdot 2s ease-in-out infinite; }
+
+.sec-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,4.5vw,58px); line-height:1.05; letter-spacing:1px; color:#fff;
+}
+.sec-title .accent { color:var(--g); }
+.sec-desc { font-size:15px; color:var(--muted); margin-top:14px; max-width:520px; margin-left:auto; margin-right:auto; line-height:1.7; }
+
+/* ── GRID ── */
+.grid {
+  position:relative; z-index:1;
+  max-width:1100px; margin:0 auto;
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:24px;
+  align-items:start; /* critical — lets each card grow independently */
+}
+
+/* ── CARD ── */
+.card {
+  position:relative;
+  background:rgba(10,10,10,0.88);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px; overflow:hidden;
+  display:flex; flex-direction:column;
+  opacity:0; transform:translateY(32px);
+  transition:opacity .55s, transform .55s ease, border-color .4s ease, box-shadow .4s ease;
+}
+.card.visible { opacity:1; transform:translateY(0); }
+.card.popular {
+  border-color:rgba(0,229,160,0.5);
+  box-shadow:0 0 0 1px rgba(0,229,160,0.1), 0 0 50px rgba(0,229,160,0.22), 0 0 100px rgba(0,229,160,0.1), 0 20px 60px rgba(0,0,0,0.5);
+  transform:translateY(-4px);
+}
+.card.popular.visible { transform:translateY(-4px); }
+
+.card.visible:hover {
+  transform: translateY(-8px);
+  border-color: rgba(0,229,160,0.55);
+  box-shadow:0 8px 20px rgba(0,0,0,0.3), 0 28px 70px rgba(0,0,0,0.55), 0 0 55px rgba(0,229,160,0.18);
+  transition: transform .45s cubic-bezier(.22,1,.36,1), border-color .35s, box-shadow .45s;
+}
+.card.popular.visible:hover {
+  transform: translateY(-12px);
+  border-color: rgba(0,229,160,0.8);
+  box-shadow:0 8px 20px rgba(0,0,0,0.35), 0 32px 80px rgba(0,0,0,0.6), 0 0 70px rgba(0,229,160,0.35);
+}
+
+.card-shimmer {
+  position:absolute; top:0; left:0; right:0;
+  height:1.5px;
+  background:linear-gradient(90deg, transparent 0%, rgba(0,229,160,0.9) 50%, transparent 100%);
+  opacity:0; z-index:4;
+  transition:opacity .3s;
+}
+.card.visible:hover .card-shimmer { opacity:1; }
+.card.popular .card-shimmer { opacity:1; }
+
+.card-spotlight {
+  position:absolute; inset:0; border-radius:20px;
+  pointer-events:none; z-index:1;
+  opacity:0; transition:opacity .35s ease;
+}
+.card.visible:hover .card-spotlight { opacity:1; }
+
+/* ── THUMBNAIL — fixed height, proper fit ── */
+.thumb {
+  position:relative;
+  width:100%;
+  height:200px; /* fixed height so all thumbnails are uniform */
+  overflow:hidden;
+  flex-shrink:0;
+  background:#050f08;
+}
+.thumb img {
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;      /* fills frame, crops overflow */
+  object-position:center top; /* favour top of image (faces) */
+  transition:transform .5s;
+}
+.card:hover .thumb img { transform:scale(1.06); }
+.thumb::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(to bottom,transparent 35%,rgba(0,0,0,0.65) 100%);
+  pointer-events:none;
+}
+.badge {
+  position:absolute; top:12px; left:12px;
+  padding:4px 10px; border-radius:6px;
+  font-family:'Bebas Neue',sans-serif; font-size:12px; letter-spacing:1.5px; z-index:2;
+}
+.badge-b { background:#FFD600; color:#000; }
+.badge-u { background:#7C3AED; color:#fff; }
+.badge-o { background:#00e5a0; color:#000; }
+.pop-pill {
+  position:absolute; top:12px; right:12px;
+  background:rgba(0,229,160,0.15); border:1px solid rgba(0,229,160,0.4);
+  color:var(--g); font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:100px; z-index:2;
+}
+
+/* ── CARD BODY ── */
+.card-body { padding:22px 22px 18px; display:flex; flex-direction:column; flex:1; position:relative; z-index:2; }
+.card-tag { font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--g); margin-bottom:7px; }
+.card-title { font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; line-height:1.25; color:#fff; margin-bottom:9px; }
+.card-desc { font-size:13px; line-height:1.7; color:var(--muted); margin-bottom:16px; flex:1; }
+
+.feats { display:flex; flex-wrap:wrap; gap:5px; }
+.feat {
+  display:flex; align-items:center; gap:4px;
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07);
+  border-radius:100px; padding:3px 9px;
+  font-size:11px; color:var(--muted); font-family:'Rajdhani',sans-serif; font-weight:600;
+}
+.feat svg { width:10px; height:10px; flex-shrink:0; }
+
+/* ── DRAWER TOGGLE ── */
+.drawer-toggle {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 22px; border-top:1px solid rgba(255,255,255,0.06);
+  cursor:pointer; font-size:12px; font-weight:600; color:var(--g);
+  font-family:'Rajdhani',sans-serif; letter-spacing:.5px; text-transform:uppercase;
+  background:rgba(0,229,160,0.03); transition:background .2s;
+  position:relative; z-index:2; user-select:none;
+}
+.drawer-toggle:hover { background:rgba(0,229,160,0.07); }
+.drawer-toggle .arrow {
+  width:16px; height:16px; border:1px solid rgba(0,229,160,0.35); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .3s, background .2s;
+}
+.drawer-toggle .arrow svg { width:8px; height:8px; transition:transform .3s; }
+.card.open .drawer-toggle .arrow { background:rgba(0,229,160,0.15); }
+.card.open .drawer-toggle .arrow svg { transform:rotate(180deg); }
+
+/* ── DRAWER — no max-height cap, grows freely ── */
+.drawer {
+  overflow:hidden;
+  max-height:0;
+  transition:max-height .45s cubic-bezier(.4,0,.2,1);
+  position:relative; z-index:2;
+}
+.card.open .drawer { max-height:2000px; } /* large enough to never clip */
+
+.drawer-inner { padding:20px 22px 24px; border-top:1px solid rgba(0,229,160,0.08); }
+.drawer-section { margin-bottom:18px; }
+.drawer-section:last-child { margin-bottom:0; }
+.drawer-label {
+  font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:1.5px; text-transform:uppercase; color:rgba(0,229,160,0.7); margin-bottom:10px;
+}
+.syllabus { display:flex; flex-direction:column; gap:6px; }
+.syl-item { display:flex; align-items:flex-start; gap:10px; font-size:12px; color:var(--muted); line-height:1.5; }
+.syl-num { font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700; color:rgba(0,229,160,0.5); min-width:20px; margin-top:1px; }
+.includes { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.inc-item { display:flex; align-items:center; gap:7px; font-size:12px; color:var(--muted); font-family:'Rajdhani',sans-serif; font-weight:600; }
+.inc-item svg { width:12px; height:12px; flex-shrink:0; color:var(--g); }
+.instructor-preview {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; border-radius:10px;
+  background:rgba(0,229,160,0.04); border:1px solid rgba(0,229,160,0.1);
+}
+.inst-avatar { width:40px; height:40px; border-radius:50%; background:#0a1a10; border:2px solid rgba(0,229,160,0.25); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--g); flex-shrink:0; }
+.inst-info { display:flex; flex-direction:column; gap:2px; }
+.inst-name { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700; color:#fff; }
+.inst-role { font-size:11px; color:var(--muted); }
+
+/* ── FOOTER ── */
+.card-footer {
+  border-top:1px solid rgba(255,255,255,0.06);
+  padding:16px 22px 20px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  position:relative; z-index:2;
+}
+.price-block { display:flex; flex-direction:column; }
+.price-lbl { font-size:11px; color:var(--muted); margin-bottom:2px; }
+.price-val { font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:1px; color:#fff; line-height:1; }
+.price-val .cur { font-size:18px; color:var(--g); }
+.price-orig { font-size:12px; color:rgba(255,255,255,0.22); text-decoration:line-through; margin-top:2px; }
+
+.btn-enroll {
+  display:inline-flex; align-items:center; gap:7px;
+  background:var(--g); color:#000; border:none;
+  padding:11px 22px; border-radius:8px;
+  font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; letter-spacing:.5px;
+  cursor:pointer; text-decoration:none; white-space:nowrap; flex-shrink:0;
+  transition:all .2s; position:relative; overflow:hidden;
+}
+.btn-enroll:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(0,229,160,0.45); background:#00ffb3; }
+.btn-enroll.outline { background:transparent; color:var(--text); border:1px solid rgba(255,255,255,0.15); }
+.btn-enroll.outline:hover { border-color:var(--g); color:var(--g); box-shadow:0 0 20px rgba(0,229,160,0.15); background:rgba(0,229,160,0.05); }
+.btn-enroll svg { width:13px; height:13px; transition:transform .2s; }
+.btn-enroll:hover svg { transform:translateX(2px); }
+
+@keyframes pdot { 0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,.5)} 50%{box-shadow:0 0 0 4px rgba(0,229,160,0)} }
+
+@media(max-width:900px){ .grid{grid-template-columns:1fr 1fr;} }
+@media(max-width:560px){ .grid{grid-template-columns:1fr;} .card-footer{flex-direction:column;align-items:flex-start;gap:14px;} .btn-enroll{width:100%;justify-content:center;} }
+</style>
+</head>
+<body>
+
+<section class="section">
+  <div class="bg-glow"></div>
+
+  <div class="heading" id="heading">
+    <div class="eyebrow"><span class="dot"></span> Start Learning Today</div>
+    <h2 class="sec-title">Courses That Make <span class="accent">Crypto Simple</span></h2>
+    <p class="sec-desc">Pick the program that fits your level and goals. Click any card to explore the full syllabus.</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- CARD 1 -->
+    <div class="card" id="c0">
+      <div class="card-shimmer"></div>
+      <div class="card-spotlight"></div>
+      <div class="thumb">
+        <img src="https://static.wixstatic.com/media/3a3b60_5d124a8c2e5d4dd5bc9fc899fad6e841~mv2.jpeg" alt="2026 Live Maven Mentorship"/>
+        <span class="badge badge-b">2026 LIVE BATCH</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">Live Maven Mentorship</div>
+        <div class="card-title">2026 Live Maven Mentorship (Zero to Hero)</div>
+        <p class="card-desc">Start from zero and build a rock-solid foundation. Learn candlestick patterns, support &amp; resistance, and how to read the market with confidence.</p>
+        <div class="feats">
+          <span class="feat"><svg viewBox="0 0 10 10" fill="none" stroke="#00e5a0" stroke-width="1.5"><path d="M2 5l2 2 4-4"/></svg>12 video lessons</span>
+          <span class="feat"><svg viewBox="0 0 10 10" fill="none" stroke="#00e5a0" stroke-width="1.5"><path d="M2 5l2 2 4-4"/></svg>Lifetime access</span>
+          <span class="feat"><svg viewBox="0 0 10 10" fill="none" stroke="#00e5a0" stroke-width="1.5"><path d="M2 5l2 2 4-4"/></svg>Certificate</span>
+        </div>
+      </div>
+      <div class="drawer-toggle" onclick="toggleDrawer('c0')">
+        <span>View full syllabus</span>
+        <span class="arrow"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 2.5l2.5 3 2.5-3"/></svg></span>
+      </div>
+      <div class="drawer" id="d0">
+        <div class="drawer-inner">
+          <div class="drawer-section">
+            <div class="drawer-label">Syllabus</div>
+            <div class="syllabus">
+              <div class="syl-item"><span class="syl-num">01</span><span>Introduction to candlestick charts &amp; timeframes</span></div>
+              <div class="syl-item"><span class="syl-num">02</span><span>Bullish &amp; bearish candlestick patterns</span></div>
+              <div class="syl-item"><span class="syl-num">03</span><span>Support &amp; resistance zones — how to mark them</span></div>
+              <div class="syl-item"><span class="syl-num">04</span><span>Trend identification — uptrend, downtrend, sideways</span></div>
+              <div class="syl-item"><span class="syl-num">05</span><span>Volume analysis &amp; what it means</span></div>
+              <div class="syl-item"><span class="syl-num">06</span><span>Basic entry and exit rules</span></div>
+              <div class="syl-item"><span class="syl-num">07</span><span>Stop-loss placement &amp; risk management basics</span></div>
+              <div class="syl-item"><span class="syl-num">08</span><span>Live chart reading practice sessions</span></div>
+            </div>
+          </div>
+          <div class="drawer-section">
+            <div class="drawer-label">What's Included</div>
+            <div class="includes">
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>12 HD video lessons</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>Downloadable notes</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>Practice worksheets</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>Lifetime access</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>Community access</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>Completion certificate</div>
+            </div>
+          </div>
+          <div class="drawer-section">
+            <div class="drawer-label">Your Instructor</div>
+            <div class="instructor-preview">
+              <div class="inst-avatar">TM</div>
+              <div class="inst-info">
+                <span class="inst-name">Trade Maven</span>
+                <span class="inst-role">5+ years live trading · 20,000+ students</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="price-block">
+          <span class="price-lbl">One-time payment</span>
+          <span class="price-val"><span class="cur">₹</span>999</span>
+          <span class="price-orig">₹1,999</span>
+        </div>
+        <a href="#" class="btn-enroll outline">Enroll Now <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5h8M7 3l3.5 3.5L7 10"/></svg></a>
+      </div>
+    </div>
+
+    <!-- CARD 2: POPULAR -->
+    <div class="card popular" id="c1">
+      <div class="card-shimmer"></div>
+      <div class="card-spotlight"></div>
+      <div class="thumb">
+        <img src="https://static.wixstatic.com/media/3a3b60_cf612160cdf64772aca7c1d671eebeae~mv2.jpeg" alt="2025 Maven Mentorship"/>
+        <span class="badge badge-u">2025 MENTORSHIP</span>
+        <span class="pop-pill">⭐ Most Popular</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">Maven Mentorship</div>
+        <div class="card-title">2025 Maven Mentorship</div>
+        <p class="card-desc">Master the proprietary MMC strategy. Deep-dive into Smart Money, ICT concepts, and advanced price action setups used by professional traders.</p>
+        <div class="feats">
+          <span class="feat"><svg viewBox="0 0 10 10" fill="none" stroke="#00e5a0" stroke-width="1.5"><path d="M2 5l2 2 4-4"/></svg>30+ lessons</span>
+          <span class="feat"><svg viewBox="0 0 10 10" fill="none" stroke="#00e5a0" stroke-width="1.5"><path d="M2 5l2 2 4-4"/></svg>Live Q&amp;A</span>
+          <span class="feat"><svg viewBox="0 0 10 10" fill="none" stroke="#00e5a0" stroke-width="1.5"><path d="M2 5l2 2 4-4"/></svg>Private community</span>
+          <span class="feat"><svg viewBox="0 0 10 10" fill="none" stroke="#00e5a0" stroke-width="1.5"><path d="M2 5l2 2 4-4"/></svg>Lifetime access</span>
+        </div>
+      </div>
+      <div class="drawer-toggle" onclick="toggleDrawer('c1')">
+        <span>View full syllabus</span>
+        <span class="arrow"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 2.5l2.5 3 2.5-3"/></svg></span>
+      </div>
+      <div class="drawer" id="d1">
+        <div class="drawer-inner">
+          <div class="drawer-section">
+            <div class="drawer-label">Syllabus</div>
+            <div class="syllabus">
+              <div class="syl-item"><span class="syl-num">01</span><span>Market structure &amp; institutional order flow</span></div>
+              <div class="syl-item"><span class="syl-num">02</span><span>Smart Money concepts — liquidity sweeps &amp; traps</span></div>
+              <div class="syl-item"><span class="syl-num">03</span><span>ICT concepts — order blocks, FVG, breaker blocks</span></div>
+              <div class="syl-item"><span class="syl-num">04</span><span>The MMC (Mirror Market Concept) — full breakdown</span></div>
+              <div class="syl-item"><span class="syl-num">05</span><span>Wick Line Concept (WLC) — entries &amp; rejections</span></div>
+              <div class="syl-item"><span class="syl-num">06</span><span>Repetition of Structure (ROS) — pattern recognition</span></div>
+              <div class="syl-item"><span class="syl-num">07</span><span>Candle Combination Concepts (CCC)</span></div>
+              <div class="syl-item"><span class="syl-num">08</span><span>Complete 22+ MMC phases &amp; techniques</span></div>
+              <div class="syl-item"><span class="syl-num">09</span><span>Advanced risk management &amp; position sizing</span></div>
+              <div class="syl-item"><span class="syl-num">10</span><span>Live market analysis &amp; trade setups</span></div>
+            </div>
+          </div>
+          <div class="drawer-section">
+            <div class="drawer-label">What's Included</div>
+            <div class="includes">
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>30+ HD video lessons</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>Monthly live Q&amp;A</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>Private Telegram group</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>Trade alerts access</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>Lifetime access</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>1-on-1 doubt sessions</div>
+            </div>
+          </div>
+          <div class="drawer-section">
+            <div class="drawer-label">Your Instructor</div>
+            <div class="instructor-preview">
+              <div class="inst-avatar">TM</div>
+              <div class="inst-info">
+                <span class="inst-name">Trade Maven</span>
+                <span class="inst-role">Proprietary MMC method · 131K+ monthly views</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="price-block">
+          <span class="price-lbl">One-time payment</span>
+          <span class="price-val"><span class="cur">₹</span>1,998</span>
+          <span class="price-orig">₹4,999</span>
+        </div>
+        <a href="#" class="btn-enroll">Enroll Now <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5h8M7 3l3.5 3.5L7 10"/></svg></a>
+      </div>
+    </div>
+
+    <!-- CARD 3: BUNDLE -->
+    <div class="card" id="c2">
+      <div class="card-shimmer"></div>
+      <div class="card-spotlight"></div>
+      <div class="thumb">
+        <img src="https://static.wixstatic.com/media/3a3b60_0978ec2ff2c44fd2873828d25d24f1a3~mv2.jpeg" alt="Bundle Course"/>
+        <span class="badge badge-o">BUNDLE COURSE</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">Best Value Bundle</div>
+        <div class="card-title">2025 Maven Mentorship &amp; 2026 Live Maven Mentorship (Bundle)</div>
+        <p class="card-desc">Get both courses together at the best value. Full 2025 mentorship content plus access to the exclusive 2026 live batch — everything in one package.</p>
+        <div class="feats">
+          <span class="feat"><svg viewBox="0 0 10 10" fill="none" stroke="#00e5a0" stroke-width="1.5"><path d="M2 5l2 2 4-4"/></svg>Both courses</span>
+          <span class="feat"><svg viewBox="0 0 10 10" fill="none" stroke="#00e5a0" stroke-width="1.5"><path d="M2 5l2 2 4-4"/></svg>Best value</span>
+          <span class="feat"><svg viewBox="0 0 10 10" fill="none" stroke="#00e5a0" stroke-width="1.5"><path d="M2 5l2 2 4-4"/></svg>Lifetime access</span>
+        </div>
+      </div>
+      <div class="drawer-toggle" onclick="toggleDrawer('c2')">
+        <span>View batch details</span>
+        <span class="arrow"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 2.5l2.5 3 2.5-3"/></svg></span>
+      </div>
+      <div class="drawer" id="d2">
+        <div class="drawer-inner">
+          <div class="drawer-section">
+            <div class="drawer-label">Batch Schedule</div>
+            <div class="syllabus">
+              <div class="syl-item"><span class="syl-num">W1</span><span>Market foundations &amp; structure — intensive sessions</span></div>
+              <div class="syl-item"><span class="syl-num">W2</span><span>Smart Money &amp; ICT concepts — live trading room</span></div>
+              <div class="syl-item"><span class="syl-num">W3</span><span>Full MMC method — 22+ techniques with live examples</span></div>
+              <div class="syl-item"><span class="syl-num">W4</span><span>Advanced setups, backtesting &amp; personalised review</span></div>
+              <div class="syl-item"><span class="syl-num">+</span><span>Post-batch mentorship &amp; community for 6 months</span></div>
+            </div>
+          </div>
+          <div class="drawer-section">
+            <div class="drawer-label">What's Included</div>
+            <div class="includes">
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>4-week live program</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>Direct 1:1 mentorship</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>All course materials</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>6-month follow-up</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>Alumni network</div>
+              <div class="inc-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l2 2 6-6"/></svg>Lifetime access</div>
+            </div>
+          </div>
+          <div class="drawer-section">
+            <div class="drawer-label">Your Instructor</div>
+            <div class="instructor-preview">
+              <div class="inst-avatar">TM</div>
+              <div class="inst-info">
+                <span class="inst-name">Trade Maven</span>
+                <span class="inst-role">In-person · Max 20 students per batch</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="price-block">
+          <span class="price-lbl">Per batch</span>
+          <span class="price-val"><span class="cur">₹</span>1,40,000</span>
+          <span class="price-orig">₹1,80,000</span>
+        </div>
+        <a href="#" class="btn-enroll outline">Get Details <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5h8M7 3l3.5 3.5L7 10"/></svg></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+/* ── DRAWER TOGGLE ── */
+function toggleDrawer(cardId) {
+  const card   = document.getElementById(cardId);
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.card.open').forEach(c => {
+    if (c.id !== cardId) c.classList.remove('open');
+  });
+  card.classList.toggle('open', !isOpen);
+  /* Report new height to Wix parent after animation completes */
+  setTimeout(reportHeight, 480);
+}
+
+/* ── HEIGHT REPORTER — tells Wix iframe how tall to be ── */
+function reportHeight() {
+  const h = document.body.scrollHeight;
+  window.parent.postMessage({ type: 'wix-height', height: h }, '*');
+}
+window.addEventListener('load', reportHeight);
+window.addEventListener('resize', reportHeight);
+setTimeout(reportHeight, 300);
+
+/* ── SPOTLIGHT ── */
+document.querySelectorAll('.card').forEach(card => {
+  const spot = card.querySelector('.card-spotlight');
+  const isP  = card.classList.contains('popular');
+  card.addEventListener('mousemove', e => {
+    const r  = card.getBoundingClientRect();
+    const px = ((e.clientX - r.left) / r.width)  * 100;
+    const py = ((e.clientY - r.top)  / r.height) * 100;
+    spot.style.background = `radial-gradient(560px circle at ${px}% ${py}%, rgba(0,229,160,${isP ? 0.18 : 0.10}) 0%, rgba(0,229,160,${isP ? 0.08 : 0.04}) 40%, transparent 70%)`;
+  });
+  card.addEventListener('mouseleave', () => { spot.style.background = ''; });
+});
+
+/* ── SCROLL REVEAL ── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    if (e.target.id === 'heading') {
+      e.target.classList.add('visible');
+    } else {
+      const i = parseInt(e.target.id.replace('c',''));
+      setTimeout(() => e.target.classList.add('visible'), i * 120);
+    }
+    obs.unobserve(e.target);
+  });
+}, { threshold: .08 });
+
+document.getElementById('heading') && obs.observe(document.getElementById('heading'));
+document.querySelectorAll('.card').forEach(c => obs.observe(c));
+</script>
+</body>
+</html>
